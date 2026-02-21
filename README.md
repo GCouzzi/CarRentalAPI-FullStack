@@ -56,3 +56,10 @@ cd CarRental-FullStack
 Bash
 docker-compose up --build
 ```
+
+## 🚀 Futuras Implementações
+- Adicionar página de perfil para que o usuário logado visualize seus dados
+- Possibilitar alteração de e-mail, telefone e cpf
+- Possibilitar alteração e adicionar status de manutenção e inativo para os automóveis
+- Listagem de aluguéis com possibilidade de filtro por status (em andamento, finalizado)
+- Listagem de automóveis com filtro por status (livre, alugado, manutencao, inativo), marca e modelo
