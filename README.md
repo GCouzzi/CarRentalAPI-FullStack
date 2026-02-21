@@ -48,8 +48,8 @@ A forma mais simples de subir o ambiente completo (Banco de Dados, Backend e Fro
 - Clone o repositório:
 ```
 bash
-git clone https://github.com/seu-usuario/CarRental-FullStack.git
-cd CarRental-FullStack
+git clone https://github.com/GCouzzi/CarRentalAPI-FullStack.git
+cd CarRentalAPI-FullStack
 ```
 * Suba a aplicação com Docker: Na raiz do projeto (onde está o arquivo docker-compose.yml), execute o comando abaixo. Ele irá baixar as imagens, buildar os containers e configurar as redes automaticamente:
 ```
