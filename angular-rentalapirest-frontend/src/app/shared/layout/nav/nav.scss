@@ -1,0 +1,39 @@
+.link-hover {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.link-hover::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: white;
+  transition: width 0.3s ease;
+}
+
+.link-hover:hover {
+  color: #f8f9fa !important;
+  transform: translateY(-2px);
+}
+
+.link-hover:hover::after {
+  width: 100%;
+}
+
+.link-hover-red {
+  transition: all 0.3s ease;
+}
+
+.link-hover-red:hover {
+  background-color: #bb2d3b !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.link-hover-red:active {
+  transform: translateY(0);
+}
+

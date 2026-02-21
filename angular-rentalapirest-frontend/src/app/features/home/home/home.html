@@ -1,0 +1,53 @@
+<div class="home d-flex flex-column align-items-center m-5">
+  <h1 class="display-6">Bem-vindo ao Sistema RentalAPI</h1>
+  <p class="lead">Sistema de gerenciamento de aluguéis de automóveis.</p>
+  <div class="funcoes d-flex flex-row align-items-center gap-5 m-5 flex-wrap">
+    <div class="card" style="width: 18rem">
+      <div
+        class="card-img-top bg-primary text-white d-flex align-items-center justify-content-center"
+        style="height: 200px"
+      >
+        <i class="bi bi-car-front-fill" style="font-size: 5rem"></i>
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">Automóveis</h5>
+        <p class="card-text">
+          Gerencie a frota de veículos disponíveis para locação.
+        </p>
+        <a routerLink="/automoveis" class="btn btn-primary">Acessar</a>
+      </div>
+    </div>
+
+    @if(isAdmin){
+    <div class="card" style="width: 18rem">
+      <div
+        class="card-img-top bg-success text-white d-flex align-items-center justify-content-center"
+        style="height: 200px"
+      >
+        <i class="bi bi-people-fill" style="font-size: 5rem"></i>
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">Usuários</h5>
+        <p class="card-text">Busque e gerencie os usuários do sistema.</p>
+        <a routerLink="/usuarios" class="btn btn-success">Acessar</a>
+      </div>
+    </div>
+    }
+
+    <div class="card" style="width: 18rem">
+      <div
+        class="card-img-top bg-warning text-white d-flex align-items-center justify-content-center"
+        style="height: 200px"
+      >
+        <i class="bi bi-clipboard-check-fill" style="font-size: 5rem"></i>
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">Aluguéis</h5>
+        <p class="card-text">
+          Controle todas as locações e devoluções de veículos.
+        </p>
+        <a routerLink="/alugueis" class="btn btn-warning text-white">Acessar</a>
+      </div>
+    </div>
+  </div>
+</div>

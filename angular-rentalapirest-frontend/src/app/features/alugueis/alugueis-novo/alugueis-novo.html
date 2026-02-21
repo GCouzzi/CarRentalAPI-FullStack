@@ -1,0 +1,141 @@
+<div class="container-fluid py-4">
+  <div class="d-flex align-items-center mb-4">
+    <h4 class="mb-0 fw-bold">
+      <i class="bi bi-box-arrow-in-right text-primary me-2"></i>Check-in
+    </h4>
+  </div>
+
+  <div class="card shadow-sm border-0">
+    <div class="card-body">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="row g-3">
+          <div class="col-sm-6">
+            <label
+              class="form-label fw-semibold small text-muted text-uppercase"
+              >Username do Cliente</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              formControlName="usuarioUsername"
+              placeholder="Ex: joao.silva"
+              list="listaUsuarios"
+              [ngClass]="getFieldClass('usuarioUsername')"
+            />
+            <datalist id="listaUsuarios">
+              <option *ngFor="let u of usuarios" [value]="u.username">
+                {{ u.username }}
+              </option>
+            </datalist>
+            <div class="invalid-feedback">
+              <ng-container
+                *ngIf="form.get('usuarioUsername')?.errors?.['required']"
+                >Username é obrigatório.</ng-container
+              >
+              <ng-container
+                *ngIf="form.get('usuarioUsername')?.errors?.['minlength'] || form.get('usuarioUsername')?.errors?.['maxlength']"
+                >Username deve ter entre 8 e 20 caracteres.</ng-container
+              >
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <label
+              class="form-label fw-semibold small text-muted text-uppercase"
+              >Placa do Automóvel</label
+            >
+            <input
+              type="text"
+              class="form-control text-uppercase font-monospace"
+              formControlName="automovelPlaca"
+              placeholder="Ex: ABC-1234"
+              maxlength="8"
+              list="listaPlacas"
+              [ngClass]="getFieldClass('automovelPlaca')"
+            />
+            <datalist id="listaPlacas">
+              <option *ngFor="let a of automoveis" [value]="a.placa">
+                {{ a.marca }} {{ a.modelo }}
+              </option>
+            </datalist>
+            <div class="invalid-feedback">
+              <ng-container
+                *ngIf="form.get('automovelPlaca')?.errors?.['required']"
+                >Placa é obrigatória.</ng-container
+              >
+              <ng-container
+                *ngIf="form.get('automovelPlaca')?.errors?.['pattern'] || form.get('automovelPlaca')?.errors?.['minlength'] || form.get('automovelPlaca')?.errors?.['maxlength']"
+              >
+                Placa deve seguir o padrão AAA-0000.
+              </ng-container>
+            </div>
+          </div>
+        </div>
+        <div
+          class="alert alert-danger d-flex align-items-center gap-2 mt-4"
+          *ngIf="errorMessage"
+        >
+          <i class="bi bi-exclamation-triangle-fill"></i>
+          {{ errorMessage }}
+        </div>
+
+        <div class="alert alert-success mt-4" *ngIf="resultado">
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <i class="bi bi-check-circle-fill"></i>
+            <strong>Check-in realizado com sucesso!</strong>
+          </div>
+          <hr class="my-2" />
+          <div class="row g-2 small">
+            <div class="col-sm-6">
+              <span class="text-muted">Recibo:</span>
+              <span class="font-monospace ms-1 fw-semibold"
+                >{{ resultado.automovelRecibo }}</span
+              >
+            </div>
+            <div class="col-sm-6">
+              <span class="text-muted">Cliente:</span>
+              <span class="ms-1 fw-semibold"
+                >{{ resultado.usuarioUsername }}</span
+              >
+            </div>
+            <div class="col-sm-6">
+              <span class="text-muted">Veículo:</span>
+              <span class="ms-1 fw-semibold"
+                >{{ resultado.automovelMarca }} {{ resultado.automovelModelo
+                }}</span
+              >
+            </div>
+            <div class="col-sm-6">
+              <span class="text-muted">Placa:</span>
+              <span class="badge bg-secondary font-monospace ms-1"
+                >{{ resultado.automovelPlaca }}</span
+              >
+            </div>
+            <div class="col-sm-6">
+              <span class="text-muted">Início:</span>
+              <span class="ms-1 fw-semibold"
+                >{{ resultado.dataInicio | date:'dd/MM/yyyy HH:mm' }}</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex gap-2 mt-4">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="form.invalid"
+          >
+            <i class="bi bi-box-arrow-in-right me-2"></i>Realizar Check-in
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            (click)="onLimpar()"
+          >
+            <i class="bi bi-x-lg me-1"></i>Limpar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

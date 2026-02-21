@@ -1,0 +1,52 @@
+<div
+  class="d-flex flex-column align-items-center justify-content-center"
+  style="min-height: 70vh"
+>
+  <div class="text-center">
+    <i
+      class="bi bi-exclamation-triangle-fill text-warning"
+      style="font-size: 8rem"
+    ></i>
+
+    <h1 class="display-1 fw-bold text-primary mt-4">404</h1>
+
+    <h2 class="display-6 mb-3">Página Não Encontrada</h2>
+    <p class="lead text-muted mb-4 px-3">
+      Desculpe, a página que você está procurando não existe ou foi removida.
+    </p>
+
+    <div class="d-flex gap-3 justify-content-center flex-wrap mb-5">
+      @if(isAuthenticated){
+      <a routerLink="/home" class="btn btn-primary btn-lg">
+        <i class="bi bi-house-fill me-2"></i>
+        Voltar para Home
+      </a>
+      }
+      <button onclick="history.back()" class="btn btn-outline-secondary btn-lg">
+        <i class="bi bi-arrow-left me-2"></i>
+        Voltar
+      </button>
+    </div>
+    @if(isAuthenticated){
+    <div class="mt-4">
+      <p class="text-muted mb-3">Acesso rápido:</p>
+      <div class="d-flex gap-4 justify-content-center flex-wrap">
+        <a routerLink="/automoveis" class="link-item">
+          <i class="bi bi-car-front-fill text-primary me-1"></i>
+          <span>Automóveis</span>
+        </a>
+        @if(isAdmin){
+        <a routerLink="/usuarios" class="link-item">
+          <i class="bi bi-people-fill text-success me-1"></i>
+          <span>Usuários</span>
+        </a>
+        }
+        <a routerLink="/alugueis" class="link-item">
+          <i class="bi bi-clipboard-check-fill text-warning me-1"></i>
+          <span>Aluguéis</span>
+        </a>
+      </div>
+    </div>
+    }
+  </div>
+</div>

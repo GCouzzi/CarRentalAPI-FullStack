@@ -1,0 +1,150 @@
+<div class="container-fluid py-4">
+  <div class="d-flex align-items-center mb-4">
+    <h4 class="mb-0 fw-bold">
+      <i class="bi bi-plus-circle-fill text-primary me-2"></i>Novo Automóvel
+    </h4>
+  </div>
+
+  <div class="card shadow-sm border-0">
+    <div class="card-body">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="row g-3">
+          <div class="col-sm-6">
+            <label
+              class="form-label fw-semibold small text-muted text-uppercase"
+              >Marca</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              formControlName="marca"
+              placeholder="Ex: Toyota"
+              [ngClass]="getFieldClass('marca')"
+            />
+            <div class="invalid-feedback">Marca é obrigatória.</div>
+          </div>
+
+          <div class="col-sm-6">
+            <label
+              class="form-label fw-semibold small text-muted text-uppercase"
+              >Modelo</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              formControlName="modelo"
+              placeholder="Ex: Corolla"
+              [ngClass]="getFieldClass('modelo')"
+            />
+            <div class="invalid-feedback">Modelo é obrigatório.</div>
+          </div>
+
+          <div class="col-sm-6">
+            <label
+              class="form-label fw-semibold small text-muted text-uppercase"
+              >Cor</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cor"
+              placeholder="Ex: Prata"
+              [ngClass]="getFieldClass('cor')"
+            />
+            <div class="invalid-feedback">Cor é obrigatória.</div>
+          </div>
+
+          <div class="col-sm-6">
+            <label
+              class="form-label fw-semibold small text-muted text-uppercase"
+              >Placa</label
+            >
+            <input
+              type="text"
+              class="form-control text-uppercase font-monospace"
+              formControlName="placa"
+              placeholder="Ex: ABC-1234"
+              maxlength="8"
+              [ngClass]="getFieldClass('placa')"
+            />
+            <div class="invalid-feedback">
+              <ng-container *ngIf="form.get('placa')?.errors?.['required']"
+                >Placa é obrigatória.</ng-container
+              >
+              <ng-container
+                *ngIf="form.get('placa')?.errors?.['pattern'] || form.get('placa')?.errors?.['minlength'] || form.get('placa')?.errors?.['maxlength']"
+              >
+                Placa deve seguir o padrão AAA-0000.
+              </ng-container>
+            </div>
+          </div>
+
+          <div class="col-sm-6">
+            <label
+              class="form-label fw-semibold small text-muted text-uppercase"
+              >Valor por Minuto (R$)</label
+            >
+            <div
+              class="input-group"
+              [ngClass]="getFieldClass('valorPorMinuto') ? 'has-validation' : ''"
+            >
+              <span class="input-group-text">R$</span>
+              <input
+                type="number"
+                class="form-control"
+                formControlName="valorPorMinuto"
+                placeholder="0,00"
+                step="0.01"
+                min="0.01"
+                [ngClass]="getFieldClass('valorPorMinuto')"
+              />
+              <div class="invalid-feedback">
+                <ng-container
+                  *ngIf="form.get('valorPorMinuto')?.errors?.['required']"
+                  >Valor é obrigatório.</ng-container
+                >
+                <ng-container
+                  *ngIf="form.get('valorPorMinuto')?.errors?.['min']"
+                  >Valor deve ser maior que R$ 0,01.</ng-container
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="alert alert-danger d-flex align-items-center gap-2 mt-4"
+          *ngIf="errorMessage"
+        >
+          <i class="bi bi-exclamation-triangle-fill"></i>
+          {{ errorMessage }}
+        </div>
+
+        <div
+          class="alert alert-success d-flex align-items-center gap-2 mt-4"
+          *ngIf="sucesso"
+        >
+          <i class="bi bi-check-circle-fill"></i>
+          Automóvel cadastrado com sucesso!
+        </div>
+
+        <div class="d-flex gap-2 mt-4">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="form.invalid"
+          >
+            <i class="bi bi-floppy me-2"></i>Salvar
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            (click)="onLimpar()"
+          >
+            <i class="bi bi-x-lg me-1"></i>Limpar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,103 @@
+<div class="container-fluid py-4">
+  <!-- Header -->
+  <div class="d-flex align-items-center mb-4">
+    <h4 class="mb-0 fw-bold">
+      <i class="bi bi-search text-primary me-2"></i>Buscar Usuário
+    </h4>
+  </div>
+
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+      <div class="row g-3 align-items-end">
+        <div class="col-sm-3">
+          <label class="form-label fw-semibold small text-muted text-uppercase">Buscar por</label>
+          <select class="form-select" [(ngModel)]="tipoBusca" (change)="onTipoChange()">
+            <option value="username">Username</option>
+            <option value="email">E-mail</option>
+            <option value="cpf">CPF</option>
+          </select>
+        </div>
+
+        <div class="col-sm-5">
+          <label class="form-label fw-semibold small text-muted text-uppercase">
+            {{ tipoBusca === 'email' ? 'E-mail' : tipoBusca === 'cpf' ? 'CPF' : 'Username' }}
+          </label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="valor"
+            [placeholder]="tipoBusca === 'email' ? 'Ex: joao@email.com' : tipoBusca === 'cpf' ? 'Ex: 12345678901' : 'Ex: joao.silva'"
+            (keyup.enter)="onBuscar()"
+          />
+        </div>
+
+        <div class="col-auto">
+          <button class="btn btn-primary" (click)="onBuscar()" [disabled]="!valor.trim()">
+            <i class="bi bi-search me-2"></i>Buscar
+          </button>
+        </div>
+
+        <div class="col-auto" *ngIf="resultado || errorMessage">
+          <button class="btn btn-outline-secondary" (click)="onLimpar()">
+            <i class="bi bi-x-lg me-1"></i>Limpar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Erro -->
+  <div class="alert alert-danger d-flex align-items-center gap-2" *ngIf="errorMessage">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    {{ errorMessage }}
+  </div>
+
+  <!-- Resultado -->
+  <div class="card shadow-sm border-0" *ngIf="resultado">
+    <div class="card-header bg-white border-bottom d-flex align-items-center justify-content-between">
+      <span class="fw-semibold">Resultado</span>
+      <span
+        class="badge rounded-pill"
+        [ngClass]="resultado.role === 'ADMIN' ? 'bg-warning text-dark' : 'bg-success'"
+      >
+        {{ resultado.role === 'ADMIN' ? 'Admin' : 'Cliente' }}
+      </span>
+    </div>
+    <div class="card-body">
+      <div class="row g-3 small">
+        <div class="col-md-4">
+          <p class="text-muted text-uppercase fw-semibold mb-1">ID</p>
+          <p class="font-monospace fw-medium mb-0">#{{ resultado.id }}</p>
+        </div>
+        <div class="col-md-4">
+          <p class="text-muted text-uppercase fw-semibold mb-1">Username</p>
+          <p class="fw-medium mb-0">{{ resultado.username }}</p>
+        </div>
+        <div class="col-md-4">
+          <p class="text-muted text-uppercase fw-semibold mb-1">Nome Completo</p>
+          <p class="fw-medium mb-0">{{ resultado.nomeCompleto }}</p>
+        </div>
+        <div class="col-md-4">
+          <p class="text-muted text-uppercase fw-semibold mb-1">E-mail</p>
+          <p class="fw-medium mb-0">{{ resultado.email }}</p>
+        </div>
+        <div class="col-md-4">
+          <p class="text-muted text-uppercase fw-semibold mb-1">CPF</p>
+          <p class="font-monospace fw-medium mb-0">{{ resultado.cpf }}</p>
+        </div>
+        <div class="col-md-4">
+          <p class="text-muted text-uppercase fw-semibold mb-1">Telefone</p>
+          <p class="fw-medium mb-0">{{ resultado.telefone }}</p>
+        </div>
+        @if(resultado.role !== 'ADMIN') {
+        <div class="col-md-4">
+          <p class="text-muted text-uppercase fw-semibold mb-1">Ações</p>
+          <button class="btn btn-sm btn-outline-danger" (click)="onDelete(resultado.id)">
+            <i class="bi bi-trash me-1"></i>Excluir
+          </button>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

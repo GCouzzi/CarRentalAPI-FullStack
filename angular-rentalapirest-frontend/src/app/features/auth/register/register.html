@@ -1,0 +1,18 @@
+<div
+  class="d-flex flex-column align-items-center min-vh-100 py-5"
+>
+  <app-auth
+    [config]="config"
+    [loading]="loading"
+    [errorMessage]="errorMessage"
+    [sucessMessage]="sucessMessage"
+    (formSubmit)="onSubmit($event)"
+    class="w-100"
+  ></app-auth>
+
+  <div class="w-50 py-3">
+    <a routerLink="/auth/login" class="btn btn-outline-dark w-100 fs-6">
+      Já possui cadastro? Faça o login.
+    </a>
+  </div>
+</div>

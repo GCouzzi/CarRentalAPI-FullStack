@@ -1,0 +1,282 @@
+<div class="container-fluid py-4">
+  <div class="d-flex align-items-center mb-4">
+    <h4 class="mb-0 fw-bold">
+      <i class="bi bi-search text-primary me-2"></i>Busca de Aluguéis
+    </h4>
+  </div>
+
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+      <div class="row g-3 align-items-end">
+        <div class="col-sm-4">
+          <label class="form-label fw-semibold small text-muted text-uppercase"
+            >Buscar por Recibo</label
+          >
+          <div class="input-group">
+            <input
+              type="text"
+              class="form-control font-monospace"
+              [(ngModel)]="recibo"
+              placeholder="Ex: 20240301080000"
+              (keyup.enter)="onBuscarPorRecibo()"
+            />
+            <button
+              class="btn btn-primary"
+              (click)="onBuscarPorRecibo()"
+              [disabled]="!recibo.trim()"
+            >
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="col-auto d-flex align-items-end pb-1">
+          <span class="text-muted small">ou</span>
+        </div>
+
+        <div class="col-sm-4">
+          <label class="form-label fw-semibold small text-muted text-uppercase"
+            >Buscar por Username</label
+          >
+          <div class="input-group">
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="username"
+              placeholder="Ex: joao.silva"
+              list="listaUsuarios"
+              (keyup.enter)="onBuscarPorUsername()"
+            />
+            <datalist id="listaUsuarios">
+              <option *ngFor="let u of usuarios" [value]="u.username"></option>
+            </datalist>
+            <button
+              class="btn btn-primary"
+              (click)="onBuscarPorUsername()"
+              [disabled]="!username.trim()"
+            >
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="col-auto">
+          <button
+            class="btn btn-outline-secondary"
+            (click)="onLimpar()"
+            *ngIf="resultadoRecibo || alugueis.length > 0 || errorMessage"
+          >
+            <i class="bi bi-x-lg me-1"></i>Limpar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="alert alert-danger d-flex align-items-center gap-2"
+    *ngIf="errorMessage"
+  >
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    {{ errorMessage }}
+  </div>
+
+  <div class="card shadow-sm border-0 mb-4" *ngIf="resultadoRecibo">
+    <div
+      class="card-header bg-white border-bottom d-flex align-items-center justify-content-between"
+    >
+      <span class="fw-semibold">Resultado por Recibo</span>
+      <span class="badge bg-secondary font-monospace"
+        >{{ resultadoRecibo.automovelRecibo }}</span
+      >
+    </div>
+    <div class="card-body">
+      <div class="row g-3 small">
+        <div class="col-sm-4">
+          <p class="text-muted text-uppercase fw-semibold mb-1">Cliente</p>
+          <p class="fw-medium mb-0">{{ resultadoRecibo.usuarioUsername }}</p>
+        </div>
+        <div class="col-sm-4">
+          <p class="text-muted text-uppercase fw-semibold mb-1">Veículo</p>
+          <p class="fw-medium mb-0">
+            {{ resultadoRecibo.automovelMarca }} {{
+            resultadoRecibo.automovelModelo }}
+          </p>
+        </div>
+        <div class="col-sm-4">
+          <p class="text-muted text-uppercase fw-semibold mb-1">Placa</p>
+          <span class="badge bg-secondary font-monospace"
+            >{{ resultadoRecibo.automovelPlaca }}</span
+          >
+        </div>
+        <div class="col-sm-4">
+          <p class="text-muted text-uppercase fw-semibold mb-1">Início</p>
+          <p class="fw-medium mb-0">
+            {{ resultadoRecibo.dataInicio | date:'dd/MM/yyyy HH:mm' }}
+          </p>
+        </div>
+        <div class="col-sm-4">
+          <p class="text-muted text-uppercase fw-semibold mb-1">Fim</p>
+          <p class="fw-medium mb-0" *ngIf="resultadoRecibo.dataFim">
+            {{ resultadoRecibo.dataFim | date:'dd/MM/yyyy HH:mm' }}
+          </p>
+          <span
+            class="badge bg-warning text-dark"
+            *ngIf="!resultadoRecibo.dataFim"
+            >Em andamento</span
+          >
+        </div>
+        <div class="col-sm-4">
+          <p class="text-muted text-uppercase fw-semibold mb-1">Valor</p>
+          <p
+            class="fw-semibold text-success mb-0"
+            *ngIf="resultadoRecibo.valor"
+          >
+            {{ resultadoRecibo.valor | currency:'BRL' }}
+          </p>
+          <span class="text-muted" *ngIf="!resultadoRecibo.valor">—</span>
+        </div>
+        <div class="col-sm-4" *ngIf="resultadoRecibo.desconto">
+          <p class="text-muted text-uppercase fw-semibold mb-1">Desconto</p>
+          <p class="fw-semibold text-danger mb-0">
+            - {{ resultadoRecibo.desconto | currency:'BRL' }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card shadow-sm border-0" *ngIf="alugueis.length > 0">
+    <div class="card-header bg-white border-bottom">
+      <span class="fw-semibold"
+        >Aluguéis de <span class="text-primary">{{ username }}</span></span
+      >
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th class="ps-3 text-uppercase small fw-semibold text-muted">
+                Recibo
+              </th>
+              <th class="text-uppercase small fw-semibold text-muted">
+                Veículo
+              </th>
+              <th class="text-uppercase small fw-semibold text-muted">Placa</th>
+              <th class="text-uppercase small fw-semibold text-muted">
+                Início
+              </th>
+              <th class="text-uppercase small fw-semibold text-muted">Fim</th>
+              <th class="text-uppercase small fw-semibold text-muted">Valor</th>
+              <th class="text-uppercase small fw-semibold text-muted">
+                Status
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let aluguel of alugueis">
+              <td class="ps-3">
+                <span class="font-monospace small text-muted"
+                  >{{ aluguel.automovelRecibo }}</span
+                >
+              </td>
+              <td>
+                <div class="fw-medium">
+                  {{ aluguel.automovelMarca }} {{ aluguel.automovelModelo }}
+                </div>
+                <small class="text-muted">{{ aluguel.automovelCor }}</small>
+              </td>
+              <td>
+                <span class="badge bg-secondary font-monospace"
+                  >{{ aluguel.automovelPlaca }}</span
+                >
+              </td>
+              <td class="small text-muted">
+                {{ aluguel.dataInicio | date:'dd/MM/yyyy HH:mm' }}
+              </td>
+              <td class="small text-muted">
+                <span *ngIf="aluguel.dataFim"
+                  >{{ aluguel.dataFim | date:'dd/MM/yyyy HH:mm' }}</span
+                >
+                <span
+                  *ngIf="!aluguel.dataFim"
+                  class="badge bg-warning text-dark"
+                  >Em andamento</span
+                >
+              </td>
+              <td>
+                <span class="fw-semibold text-success" *ngIf="aluguel.valor"
+                  >{{ aluguel.valor | currency:'BRL' }}</span
+                >
+                <span class="text-muted small" *ngIf="!aluguel.valor">—</span>
+              </td>
+              <td>
+                <span
+                  class="badge rounded-pill"
+                  [ngClass]="aluguel.dataFim ? 'bg-success' : 'bg-warning text-dark'"
+                >
+                  {{ aluguel.dataFim ? 'Finalizado' : 'Em andamento' }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div
+      class="card-footer bg-white border-top d-flex align-items-center justify-content-between flex-wrap gap-2"
+      *ngIf="page && page.totalPages > 1"
+    >
+      <small class="text-muted">
+        Página {{ page.number + 1 }} de {{ page.totalPages }} &mdash; {{
+        page.totalElements }} registros
+      </small>
+      <nav>
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item" [class.disabled]="page.first">
+            <button class="page-link" (click)="goToPage(0)">
+              <i class="bi bi-chevron-double-left"></i>
+            </button>
+          </li>
+          <li class="page-item" [class.disabled]="page.first">
+            <button class="page-link" (click)="goToPage(currentPage - 1)">
+              <i class="bi bi-chevron-left"></i>
+            </button>
+          </li>
+          <li
+            class="page-item"
+            *ngFor="let p of getPageNumbers()"
+            [class.active]="p === currentPage"
+          >
+            <button class="page-link" (click)="goToPage(p)">{{ p + 1 }}</button>
+          </li>
+          <li class="page-item" [class.disabled]="page.last">
+            <button class="page-link" (click)="goToPage(currentPage + 1)">
+              <i class="bi bi-chevron-right"></i>
+            </button>
+          </li>
+          <li class="page-item" [class.disabled]="page.last">
+            <button class="page-link" (click)="goToPage(page.totalPages - 1)">
+              <i class="bi bi-chevron-double-right"></i>
+            </button>
+          </li>
+        </ul>
+      </nav>
+      <div class="d-flex align-items-center gap-2">
+        <small class="text-muted">Por página:</small>
+        <select
+          class="form-select form-select-sm"
+          style="width: auto"
+          [(ngModel)]="pageSize"
+          (change)="onPageSizeChange()"
+        >
+          <option [value]="5">5</option>
+          <option [value]="10">10</option>
+          <option [value]="20">20</option>
+          <option [value]="50">50</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,17 @@
+<div
+  class="d-flex flex-column justify-content-center align-items-center vh-100"
+>
+  <app-auth
+    [config]="config"
+    [loading]="loading"
+    [errorMessage]="errorMessage"
+    (formSubmit)="onSubmit($event)"
+    class="w-100"
+  ></app-auth>
+
+  <div class="w-50 mt-3">
+    <a routerLink="/auth/register" class="btn btn-outline-dark w-100 fs-6">
+      Ainda não tem conta? Cadastre-se
+    </a>
+  </div>
+</div>
