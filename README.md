@@ -41,7 +41,7 @@ O sistema possui diferentes níveis de acesso (Roles), garantindo que cada usuá
 ## 🚀 Como Rodar o Projeto
 A forma mais simples de subir o ambiente completo (Banco de Dados, Backend e Frontend) é utilizando o Docker, garantindo que todas as dependências estejam configuradas corretamente.
 
-###📋 Pré-requisitos
+### 📋 Pré-requisitos
 - Docker e Docker Compose instalados.
 
 ### 🛠️ Passo a Passo
