@@ -4,10 +4,10 @@ Este é um sistema para gerenciamento de aluguéis de veículos, desenvolvido pa
 
 ## Tecnologias Principais
 
-### Backend (Java)
+### Backend 
 - **Java 17** & **Spring Boot 3**
 
-### Frontend (Angular)
+### Frontend 
 - **Angular 18**
 - **Bootstrap** & **Bootstrap Icons**
 
