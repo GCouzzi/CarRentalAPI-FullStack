@@ -65,8 +65,8 @@ public class AuthenticationController {
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                     loginDto.username(), loginDto.password());
             authenticationManager.authenticate(authenticationToken);
-            Usuario.Role role = usuarioService.buscarRolePorUsername(loginDto.username());
-            JwtToken token = JwtUtils.createToken(loginDto.username(), role.name().substring("ROLE_".length()));
+            Usuario usuario = usuarioService.buscarPorUsername(loginDto.username());
+            JwtToken token = JwtUtils.createToken(loginDto.username(), usuario.getRole().name().substring("ROLE_".length()), usuario.getId());
             return ResponseEntity.ok(token);
         } catch(AuthenticationException ex){
             log.error(ex.getMessage());

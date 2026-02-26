@@ -1,5 +1,6 @@
 package com.gsalles.carrental.service;
 
+import com.gsalles.carrental.dto.AtualizarContatoDTO;
 import com.gsalles.carrental.entity.Usuario;
 import com.gsalles.carrental.exception.*;
 import com.gsalles.carrental.repository.UsuarioRepository;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -103,5 +105,24 @@ public class UsuarioService {
             throw new DeleteViolationException("Usuário possui role ADMIN.");
         }
         repository.deleteById(id);
+    }
+
+    @Transactional
+    public Usuario updateEmailAndOrTelefone(Long id, AtualizarContatoDTO dto){
+        Usuario u = buscarPorId(id);
+
+        if(dto.email() != null &&  !dto.email().isBlank() && !Objects.equals(dto.email(), u.getEmail())){
+            if(repository.existsByEmail(dto.email())){
+                throw new EmailUniqueViolationException("Email já cadastrado.");
+            }
+            u.setEmail(dto.email());
+        }
+        if(dto.telefone() != null && !dto.telefone().isBlank() && !Objects.equals(dto.telefone(), u.getTelefone())){
+            if(repository.existsByTelefone(dto.telefone())){
+                throw new TelefoneUniqueViolationException("Telefone já cadastrado.");
+            }
+            u.setTelefone(dto.telefone());
+        }
+        return repository.save(u);
     }
 }

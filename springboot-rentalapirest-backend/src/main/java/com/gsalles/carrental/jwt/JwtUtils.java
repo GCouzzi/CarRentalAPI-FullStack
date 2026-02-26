@@ -36,7 +36,7 @@ public class JwtUtils {
         return Date.from(expire.atZone(ZoneId.systemDefault()).toInstant());
     }
 
-    public static JwtToken createToken(String username, String role){
+    public static JwtToken createToken(String username, String role, Long id){
         Date issuedAt = new Date();
         Date limit = toExpireDate(issuedAt);
         String token = Jwts.builder()
@@ -46,6 +46,7 @@ public class JwtUtils {
                 .subject(username)
                 .issuedAt(issuedAt)
                 .expiration(limit)
+                .claim("id", id)
                 .claim("role", role)
                 .signWith(generateKey())
                 .compact();
