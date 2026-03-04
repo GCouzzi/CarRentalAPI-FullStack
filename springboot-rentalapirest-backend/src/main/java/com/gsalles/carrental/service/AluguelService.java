@@ -25,6 +25,12 @@ public class AluguelService {
         if(automovel.getStatus() == Automovel.Status.ALUGADO){
             throw new AluguelAutomovelViolationException("Esse automóvel já está alugado.");
         }
+        if(automovel.getStatus() == Automovel.Status.INATIVO){
+            throw new AluguelAutomovelViolationException("Esse automóvel está inativo.");
+        }
+        if(automovel.getStatus() == Automovel.Status.MANUTENCAO){
+            throw new AluguelAutomovelViolationException("Esse automóvel está em manutenção.");
+        }
         ua.setAutomovel(automovel);
         automovel.setStatus(Automovel.Status.ALUGADO);
 

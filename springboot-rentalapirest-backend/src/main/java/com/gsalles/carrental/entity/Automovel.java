@@ -35,7 +35,7 @@ public class Automovel {
 	@Enumerated(EnumType.STRING)
 	private Status status = Status.LIVRE;
 	public enum Status{
-		LIVRE, ALUGADO
+		LIVRE, ALUGADO, MANUTENCAO, INATIVO
 	}
 
 	@Override

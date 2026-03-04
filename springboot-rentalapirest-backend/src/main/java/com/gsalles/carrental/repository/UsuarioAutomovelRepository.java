@@ -16,4 +16,8 @@ public interface UsuarioAutomovelRepository extends JpaRepository<UsuarioAutomov
     long countByUsuarioUsernameAndDataFimIsNotNull(String username);
 
     Page<UsuarioAutomovel> findAllByUsuarioUsername(String username, Pageable pageable);
+
+    Page<UsuarioAutomovel> findByDataFimIsNull(Pageable pageable);
+
+    Page<UsuarioAutomovel> findByDataFimIsNotNull(Pageable pageable);
 }

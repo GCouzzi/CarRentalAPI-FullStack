@@ -1,6 +1,7 @@
 package com.gsalles.carrental.controller;
 
 import com.gsalles.carrental.dto.AutomovelDTO;
+import com.gsalles.carrental.dto.UpdateStatusDTO;
 import com.gsalles.carrental.dto.mappers.AutomovelMapper;
 import com.gsalles.carrental.dto.rdto.AutomovelResponseDTO;
 import com.gsalles.carrental.dto.rdto.UsuarioResponseDTO;
@@ -41,7 +42,7 @@ public class AutomovelController {
     @Operation(
             summary = "Criar um automóvel",
             description = "Operação para criar um automóvel",
-            tags = { "Automoveis" },
+            tags = {"Automoveis"},
             security = @SecurityRequirement(name = "security"),
             responses = {
                     @ApiResponse(
@@ -75,7 +76,7 @@ public class AutomovelController {
     @PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<AutomovelResponseDTO> create(@RequestBody @Valid AutomovelDTO dto){
+    public ResponseEntity<AutomovelResponseDTO> create(@RequestBody @Valid AutomovelDTO dto) {
         Automovel automovel = automovelService.salvar(AutomovelMapper.toAutomovel(dto));
         return ResponseEntity.status(HttpStatus.CREATED).body(AutomovelMapper.toDto(automovel));
     }
@@ -83,7 +84,7 @@ public class AutomovelController {
     @Operation(
             summary = "Buscar automóvel por placa",
             description = "Operação para buscar automóvel por placa",
-            tags = { "Automoveis" },
+            tags = {"Automoveis"},
             security = @SecurityRequirement(name = "security"),
             responses = {
                     @ApiResponse(
@@ -108,16 +109,16 @@ public class AutomovelController {
     )
     @GetMapping(value = "/placa/{placa}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @PreAuthorize("hasAnyRole('ADMIN', 'CLIENTE')")
-    public ResponseEntity<AutomovelResponseDTO> findByPlaca(@PathVariable String placa){
+    public ResponseEntity<AutomovelResponseDTO> findByPlaca(@PathVariable String placa) {
         AutomovelResponseDTO dto = AutomovelMapper.toDto(automovelService.buscarPorPlaca(placa));
-        dto.add(linkTo(methodOn(AutomovelController.class).findAll(0, 10, "id", "asc")).withRel("Lista de automóveis"));
+        dto.add(linkTo(methodOn(AutomovelController.class).findAll(0, 10, "id", "asc", null, null, null)).withRel("Lista de automóveis"));
         return ResponseEntity.ok(dto);
     }
 
     @Operation(
             summary = "Buscar automóvel por id",
             description = "Operação para buscar automóvel por id",
-            tags = { "Automoveis" },
+            tags = {"Automoveis"},
             security = @SecurityRequirement(name = "security"),
             responses = {
                     @ApiResponse(
@@ -141,22 +142,25 @@ public class AutomovelController {
     )
     @GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @PreAuthorize("hasAnyRole('ADMIN', 'CLIENTE')")
-    public ResponseEntity<AutomovelResponseDTO> findById(@PathVariable Long id){
+    public ResponseEntity<AutomovelResponseDTO> findById(@PathVariable Long id) {
         AutomovelResponseDTO dto = AutomovelMapper.toDto(automovelService.buscarPorId(id));
-        dto.add(linkTo(methodOn(AutomovelController.class).findAll(0, 10, "id", "asc")).withRel("Lista de automóveis"));
+        dto.add(linkTo(methodOn(AutomovelController.class).findAll(0, 10, "id", "asc", null, null, null)).withRel("Lista de automóveis"));
         return ResponseEntity.ok(dto);
     }
 
     @Operation(
             summary = "Listar todos automóveis",
-            description = "Operação para listar todos os automóveis.",
-            tags = { "Automoveis" },
+            description = "Operação para listar todos os automóveis com filtros opcionais.",
+            tags = {"Automoveis"},
             security = @SecurityRequirement(name = "security"),
             parameters = {
                     @Parameter(name = "page", description = "Número da página a ser retornada (começa em 0)", example = "0"),
                     @Parameter(name = "size", description = "Quantidade de registros por página", example = "10"),
                     @Parameter(name = "sortBy", description = "Campo para ordenação", example = "id"),
-                    @Parameter(name = "direction", description = "Direção da ordenação: asc ou desc", example = "asc")
+                    @Parameter(name = "direction", description = "Direção da ordenação: asc ou desc", example = "asc"),
+                    @Parameter(name = "status", description = "Status do automóvel", example = "LIVRE", required = false),
+                    @Parameter(name = "marca", description = "Marca do automóvel", example = "Toyota", required = false),
+                    @Parameter(name = "modelo", description = "Modelo do automóvel", example = "Corolla Altis Premium 2024", required = false)
             },
             responses = {
                     @ApiResponse(
@@ -177,10 +181,13 @@ public class AutomovelController {
     public ResponseEntity<Page<AutomovelResponseDTO>> findAll(@RequestParam(defaultValue = "0") int page,
                                                               @RequestParam(defaultValue = "10") int size,
                                                               @RequestParam(defaultValue = "id") String sortBy,
-                                                              @RequestParam(defaultValue = "asc") String direction){
+                                                              @RequestParam(defaultValue = "asc") String direction,
+                                                              @RequestParam(required = false) Automovel.Status status,
+                                                              @RequestParam(required = false) String marca,
+                                                              @RequestParam(required = false) String modelo) {
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<AutomovelResponseDTO> list = AutomovelMapper.toListDto(automovelService.buscarTodos(pageable));
+        Page<AutomovelResponseDTO> list = AutomovelMapper.toListDto(automovelService.buscarTodos(status, marca, modelo, pageable));
         list.forEach(dto -> dto.add(linkTo(methodOn(AutomovelController.class).findByPlaca(dto.getPlaca())).withRel("Self")));
         return ResponseEntity.ok(list);
     }
@@ -188,7 +195,7 @@ public class AutomovelController {
     @Operation(
             summary = "Deletar automóvel por placa",
             description = "Operação deletar automóvel por placa",
-            tags = { "Automoveis" },
+            tags = {"Automoveis"},
             security = @SecurityRequirement(name = "security"),
             responses = {
                     @ApiResponse(
@@ -209,15 +216,47 @@ public class AutomovelController {
     )
     @DeleteMapping(value = "/placa/{placa}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deleteByPlaca(@PathVariable String placa){
+    public ResponseEntity<Void> deleteByPlaca(@PathVariable String placa) {
         automovelService.deleteByPlaca(placa);
         return ResponseEntity.noContent().build();
     }
 
     @Operation(
+            summary = "Alterar status automóvel por placa",
+            description = "Operação alterar status automóvel por placa",
+            tags = {"Automoveis"},
+            security = @SecurityRequirement(name = "security"),
+            responses = {
+                    @ApiResponse(
+                            description = "Success",
+                            responseCode = "200"
+                    ),
+                    @ApiResponse(
+                            description = "Automovel não encontrado.",
+                            responseCode = "404",
+                            content = {
+                                    @Content(mediaType = "application/json", schema = @Schema(implementation = EntityNotFoundException.class)),
+                                    @Content(mediaType = "application/xml", schema = @Schema(implementation = EntityNotFoundException.class))
+                            }
+                    ),
+                    @ApiResponse(description = "Usuário não está autenticado.", responseCode = "401"),
+                    @ApiResponse(description = "Usuário não possui permissão.", responseCode = "403")
+            }
+    )
+    @PatchMapping(value = "/placa/{placa}",
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<AutomovelResponseDTO> updateStatusByPlaca(@PathVariable String placa,
+                                                                    @RequestBody @Valid UpdateStatusDTO status){
+        Automovel a = automovelService.updateByPlaca(placa, status.status());
+        return ResponseEntity.ok(AutomovelMapper.toDto(a));
+    }
+
+    @Operation(
             summary = "Listar todos automóveis",
             description = "Operação para listar todos os automóveis.",
-            tags = { "Automoveis" },
+            tags = {"Automoveis"},
             security = @SecurityRequirement(name = "security"),
             responses = {
                     @ApiResponse(
@@ -236,7 +275,7 @@ public class AutomovelController {
     )
     @GetMapping(value = "/all", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<AutomovelResponseDTO>> findAllCustom(){
+    public ResponseEntity<List<AutomovelResponseDTO>> findAllCustom() {
         List<AutomovelResponseDTO> list = AutomovelMapper.toListDto(automovelService.buscarTodosCustom());
         list.forEach(dto -> dto.add(linkTo(methodOn(AutomovelController.class).findByPlaca(dto.getPlaca())).withRel("Self")));
         return ResponseEntity.ok(list);

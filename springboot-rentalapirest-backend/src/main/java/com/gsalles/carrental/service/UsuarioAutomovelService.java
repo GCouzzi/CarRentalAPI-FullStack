@@ -44,4 +44,12 @@ public class UsuarioAutomovelService {
     public Page<UsuarioAutomovel> buscarTodos(Pageable pageable){
         return repository.findAll(pageable);
     }
+
+    @Transactional(readOnly = true)
+    public Page<UsuarioAutomovel> buscarTodosAlugueisPorStatus(Boolean finalizado, Pageable pageable) {
+        if(finalizado == true){
+            return repository.findByDataFimIsNotNull(pageable);
+        }
+        return repository.findByDataFimIsNull(pageable);
+    }
 }
