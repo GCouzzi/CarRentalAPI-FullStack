@@ -26,7 +26,7 @@
             <i class="bi bi-search me-2"></i>Buscar
           </button>
         </div>
-        <div class="col-auto" *ngIf="automovel">
+        <div class="col-auto">
           <button class="btn btn-outline-secondary" (click)="onLimpar()">
             <i class="bi bi-x-lg me-1"></i>Limpar
           </button>
@@ -43,61 +43,69 @@
     {{errorMessage}}
   </div>
 
-  <div class="card shadow-sm border-0" *ngIf="automovel">
-    <div
-      class="card-header bg-white border-bottom d-flex align-items-center justify-content-between"
-    >
-      <div>
-        <span class="fw-semibold">Resultado</span>
-        <span class="badge bg-secondary font-monospace fs-6 ms-2"
-          >{{ automovel.placa }}</span
-        >
-      </div>
-      @if(isAdmin){
-      <button
-        class="btn btn-outline-danger btn-sm"
-        (click)="onExcluirVeiculo(automovel.placa)"
+  <ng-container *ngIf="automovel$ | async as automovel">
+    <div class="card shadow-sm border-0" *ngIf="automovel">
+      <div
+        class="card-header bg-white border-bottom d-flex align-items-center justify-content-between"
       >
-        <i class="bi bi-trash3 me-1"></i>Excluir Veículo
-      </button>
-      }
-    </div>
-    <div class="card-body">
-      <div class="row g-3">
-        <div class="col-sm-6 col-md-4">
-          <p class="text-muted small text-uppercase fw-semibold mb-1">Marca</p>
-          <p class="fw-medium mb-0">{{ automovel.marca }}</p>
-        </div>
-
-        <div class="col-sm-6 col-md-4">
-          <p class="text-muted small text-uppercase fw-semibold mb-1">Modelo</p>
-          <p class="fw-medium mb-0">{{ automovel.modelo }}</p>
-        </div>
-
-        <div class="col-sm-6 col-md-4">
-          <p class="text-muted small text-uppercase fw-semibold mb-1">Cor</p>
-          <p class="fw-medium mb-0">{{ automovel.cor }}</p>
-        </div>
-
-        <div class="col-sm-6 col-md-4">
-          <p class="text-muted small text-uppercase fw-semibold mb-1">
-            Valor por Minuto
-          </p>
-          <p class="fw-semibold text-success mb-0">
-            {{ automovel.valorPorMinuto | currency:'BRL' }}
-          </p>
-        </div>
-
-        <div class="col-sm-6 col-md-4">
-          <p class="text-muted small text-uppercase fw-semibold mb-1">Status</p>
-          <span
-            class="badge rounded-pill"
-            [ngClass]="automovel.status === 'LIVRE' ? 'bg-success' : 'bg-danger'"
+        <div>
+          <span class="fw-semibold">Resultado</span>
+          <span class="badge bg-secondary font-monospace fs-6 ms-2"
+            >{{ automovel.placa }}</span
           >
-            {{ automovel.status === 'LIVRE' ? 'Livre' : 'Alugado' }}
-          </span>
+        </div>
+        @if(isAdmin){
+        <button
+          class="btn btn-outline-danger btn-sm"
+          (click)="onExcluirVeiculo(automovel.placa)"
+        >
+          <i class="bi bi-trash3 me-1"></i>Excluir Veículo
+        </button>
+        }
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-sm-6 col-md-4">
+            <p class="text-muted small text-uppercase fw-semibold mb-1">
+              Marca
+            </p>
+            <p class="fw-medium mb-0">{{ automovel.marca }}</p>
+          </div>
+
+          <div class="col-sm-6 col-md-4">
+            <p class="text-muted small text-uppercase fw-semibold mb-1">
+              Modelo
+            </p>
+            <p class="fw-medium mb-0">{{ automovel.modelo }}</p>
+          </div>
+
+          <div class="col-sm-6 col-md-4">
+            <p class="text-muted small text-uppercase fw-semibold mb-1">Cor</p>
+            <p class="fw-medium mb-0">{{ automovel.cor }}</p>
+          </div>
+
+          <div class="col-sm-6 col-md-4">
+            <p class="text-muted small text-uppercase fw-semibold mb-1">
+              Valor por Minuto
+            </p>
+            <p class="fw-semibold text-success mb-0">
+              {{ automovel.valorPorMinuto | currency:'BRL' }}
+            </p>
+          </div>
+
+          <div class="col-sm-6 col-md-4">
+            <p class="text-muted small text-uppercase fw-semibold mb-1">
+              Status
+            </p>
+            <span
+              class="badge rounded-pill"
+              [ngClass]="automovel.status === 'LIVRE' ? 'bg-success' : 'bg-danger'"
+            >
+              {{ automovel.status === 'LIVRE' ? 'Livre' : 'Alugado' }}
+            </span>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </ng-container>
 </div>

@@ -4,6 +4,8 @@ import { Page } from '../../../core/models/page.model';
 import { AutomovelService } from '../../../core/services/automovel.service';
 import { AppApiError } from '../../../core/models/app-api-error.model';
 import { AuthService } from '../../../core/services/auth.service';
+import { BehaviorSubject, catchError, Observable, of, switchMap } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-automoveis-lista',
@@ -12,74 +14,77 @@ import { AuthService } from '../../../core/services/auth.service';
   styleUrl: './automoveis-lista.scss',
 })
 export class AutomoveisLista {
-  automoveis: AutomovelResponseDTO[] = [];
-  page: Page<AutomovelResponseDTO> | null = null;
-  isAdmin: boolean = false
-  currentPage = 0;
-  pageSize = 10;
+  isAdmin: boolean = false;
   errorMessage: string = '';
 
-  constructor(private readonly _automovelService: AutomovelService,
-    private readonly _cdr: ChangeDetectorRef,
-    private readonly _authService: AuthService) { }
+  page$!: Observable<Page<AutomovelResponseDTO> | null>;
+
+  constructor(
+    private readonly _automovelService: AutomovelService,
+    private readonly _authService: AuthService,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
+  ) {}
 
   ngOnInit(): void {
-    this.loadAutomoveis();
     this.isAdmin = this._authService.isAdmin();
+    this.page$ = this.route.queryParams.pipe(
+      switchMap((params) => {
+        const page = params['page'] ? +params['page'] : 0;
+        const size = params['size'] ? +params['size'] : 10;
+        return this._automovelService.findAll(page, size).pipe(
+          catchError((err: AppApiError) => {
+            this.errorMessage = `${err.status} - ${err.message}`;
+            return of(null);
+          }),
+        );
+      }),
+    );
   }
 
-  onDelete(placa: string): void {
+  onDelete(
+    placa: string,
+    totalInPage: number,
+    currentPage: number,
+    size: number,
+  ): void {
     if (!confirm(`Confirma exclusão do veículo placa ${placa}?`)) return;
 
     this._automovelService.deleteByPlaca(placa).subscribe({
       next: () => {
         alert('Veículo excluído com sucesso!');
-        if (this.automoveis.length === 1 && this.currentPage > 0) {
-          this.currentPage--;
-        }
-
-        this.loadAutomoveis();
-        this._cdr.markForCheck();
+        const newPage =
+          totalInPage === 1 && currentPage > 0 ? currentPage - 1 : currentPage;
+        this.router.navigate([], {
+          queryParams: { page: newPage, size },
+          queryParamsHandling: 'merge',
+        });
       },
       error: (err: AppApiError) => {
         this.errorMessage = `Error ${err.status} - ${err.message}`;
-        this._cdr.markForCheck();
-      }
+      },
     });
   }
 
   goToPage(p: number): void {
-    if (p !== this.currentPage) {
-      this.currentPage = p;
-      this.loadAutomoveis();
-    }
+    this.router.navigate([], {
+      queryParams: { page: p },
+      queryParamsHandling: 'merge',
+    });
   }
 
-  onPageSizeChange(): void {
-    this.currentPage = 0;
-    this.loadAutomoveis();
+  onPageSizeChange(newSize: number): void {
+    this.router.navigate([], {
+      queryParams: { page: 0, size: newSize },
+      queryParamsHandling: 'merge',
+    });
   }
 
-  getPageNumbers(): number[] {
-    if (!this.page) return [];
-    const start = Math.max(0, this.currentPage - 2);
-    const end = Math.min(this.page.totalPages - 1, this.currentPage + 2);
+  getPageNumbers(pageData: Page<AutomovelResponseDTO>): number[] {
+    const start = Math.max(0, pageData.number - 2);
+    const end = Math.min(pageData.totalPages - 1, pageData.number + 2);
     const range: number[] = [];
     for (let i = start; i <= end; i++) range.push(i);
     return range;
-  }
-
-  loadAutomoveis(): void {
-    this._automovelService.findAll(this.currentPage, this.pageSize).subscribe({
-      next: (response: Page<AutomovelResponseDTO>) => {
-        this.page = response;
-        this.automoveis = response.content;
-        this._cdr.markForCheck();
-      },
-      error: (err: AppApiError) => {
-        this.errorMessage = `Error ${err.status} - ${err.message}`;
-        this._cdr.markForCheck();
-      }
-    });
   }
 }

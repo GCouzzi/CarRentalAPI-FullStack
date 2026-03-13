@@ -15,11 +15,13 @@ const routes: Routes = [
     path: '',
     component: Alugueis,
     children: [
-      { path: 'listar', component: AlugueisLista, canActivate: [authGuard] },
+      { path: '', redirectTo: 'lista', pathMatch: 'full' },
+      { path: 'lista', component: AlugueisLista, canActivate: [authGuard] },
       { path: 'checkin', component: AlugueisNovo, canActivate: [adminGuard] },
       { path: 'checkout', component: AlugueisCheckout, canActivate: [adminGuard] },
-      { path: 'buscar', component: AlugueisBusca, canActivate: [adminGuard]},
-      { path: 'todos', component: AlugueisListaAdmin, canActivate: [adminGuard]}
+      { path: 'busca', component: AlugueisBusca, canActivate: [adminGuard] },
+      { path: 'busca/:recibo', component: AlugueisBusca, canActivate: [adminGuard] },
+      { path: 'todos', component: AlugueisListaAdmin, canActivate: [adminGuard] }
     ]
   }
 ];

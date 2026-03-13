@@ -55,6 +55,7 @@
       type="submit"
       class="btn btn-primary w-100 fs-5"
       [disabled]="loading"
+      [appTouchAllFormControls]="form"
     >
       @if (loading) {
       <span class="spinner-border spinner-border-sm me-2"></span>

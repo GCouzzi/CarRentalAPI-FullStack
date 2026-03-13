@@ -10,8 +10,9 @@ const routes: Routes = [
     path: '',
     component: Usuarios,
     children: [
-      { path: 'listar', component: UsuariosLista, canActivate: [adminGuard] },
-      { path: 'buscar', component: UsuariosBusca, canActivate: [adminGuard] },
+      { path: '', redirectTo: 'lista', pathMatch: 'full' },
+      { path: 'lista', component: UsuariosLista, canActivate: [adminGuard] },
+      { path: 'busca', component: UsuariosBusca, canActivate: [adminGuard] },
     ]
   }
 ];

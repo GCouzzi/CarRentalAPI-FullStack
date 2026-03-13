@@ -79,9 +79,6 @@ export class Auth implements OnChanges {
 
   onSubmit(): void {
     if (this.form.invalid) {
-      Object.keys(this.form.controls).forEach((key) => {
-        this.form.controls[key].markAsTouched();
-      });
       return;
     }
 

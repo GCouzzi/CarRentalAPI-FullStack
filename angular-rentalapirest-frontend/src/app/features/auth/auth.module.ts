@@ -7,9 +7,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AuthRoutingModule } from './auth-routing-module';
 import { CommonModule } from '@angular/common';
+import { DirectivesModule } from '../../shared/directives/directives.module';
 
 @NgModule({
-    imports: [ReactiveFormsModule, RouterModule, AuthRoutingModule, CommonModule],
+    imports: [ReactiveFormsModule, RouterModule, AuthRoutingModule, CommonModule, DirectivesModule],
     exports: [Login, Register],
     declarations: [Auth, Login, Register],
     providers: [],

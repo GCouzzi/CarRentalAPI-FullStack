@@ -3,7 +3,7 @@ import { TouchAllFormControls } from './touch-all-form-controls';
 
 @NgModule({
     imports: [],
-    exports: [],
+    exports: [TouchAllFormControls],
     declarations: [
     TouchAllFormControls
   ],

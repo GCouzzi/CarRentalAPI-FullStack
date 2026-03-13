@@ -12,9 +12,11 @@ const routes: Routes = [
     path: '',
     component: Automoveis,
     children: [
-      { path: 'listar', component: AutomoveisLista, canActivate: [authGuard] },
+      { path: '', redirectTo: 'lista', pathMatch: 'full' },
+      { path: 'lista', component: AutomoveisLista, canActivate: [authGuard] },
       { path: 'novo', component: AutomoveisNovo, canActivate: [adminGuard] },
-      { path: 'buscar', component: AutomoveisBusca, canActivate: [authGuard] },
+      { path: 'busca', component: AutomoveisBusca, canActivate: [authGuard] },
+      { path: 'busca/:placa', component: AutomoveisBusca, canActivate: [authGuard] },
     ]
   }
 ];

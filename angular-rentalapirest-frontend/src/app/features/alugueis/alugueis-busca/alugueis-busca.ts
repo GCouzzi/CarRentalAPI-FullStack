@@ -1,10 +1,12 @@
 import { UsuarioResponseDTO } from './../../../core/models/user.model';
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { AluguelResponseDTO } from '../../../core/models/aluguel.model';
 import { Page } from '../../../core/models/page.model';
 import { AluguelService } from '../../../core/services/aluguel.service';
 import { UsuarioService } from '../../../core/services/usuario.service';
 import { AppApiError } from '../../../core/models/app-api-error.model';
+import { catchError, Observable, of, switchMap, tap } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-alugueis-busca',
@@ -16,90 +18,97 @@ export class AlugueisBusca {
   recibo = '';
   username = '';
   errorMessage = '';
-
-  resultadoRecibo: AluguelResponseDTO | null = null;
-  alugueis: AluguelResponseDTO[] = [];
-  page: Page<AluguelResponseDTO> | null = null;
   usuarios: UsuarioResponseDTO[] = [];
 
-  currentPage = 0;
-  pageSize = 10;
+  resultadoRecibo$!: Observable<AluguelResponseDTO | null>;
+  resultadoUsername$!: Observable<Page<AluguelResponseDTO> | null>;
 
-  constructor(private readonly _aluguelService: AluguelService,
-    private readonly _cdr: ChangeDetectorRef,
-    private readonly _usuarioService: UsuarioService) { }
+  constructor(
+    private readonly _aluguelService: AluguelService,
+    private readonly _usuarioService: UsuarioService,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
+  ) {}
 
   ngOnInit(): void {
     this.loadUsuarios();
+
+    this.resultadoRecibo$ = this.route.queryParams.pipe(
+      tap(params => {
+        if (params['recibo']) this.recibo = params['recibo'];
+      }),
+      switchMap(params => {
+        if (!params['recibo']) return of(null);
+        return this._aluguelService.findByRecibo(params['recibo']).pipe(
+          catchError((err: AppApiError) => {
+            this.errorMessage = `${err.status} - ${err.message}`;
+            return of(null);
+          }),
+        );
+      }),
+    );
+
+    this.resultadoUsername$ = this.route.queryParams.pipe(
+      tap(params => {
+        if (params['username']) this.username = params['username'];
+      }),
+      switchMap(params => {
+        if (!params['username']) return of(null);
+        const page = params['page'] ? +params['page'] : 0;
+        const size = params['size'] ? +params['size'] : 10;
+        return this._aluguelService.findAllByUsername(params['username'], page, size).pipe(
+          catchError((err: AppApiError) => {
+            this.errorMessage = `${err.status} - ${err.message}`;
+            return of(null);
+          })
+        );
+      })
+    );
   }
 
   loadUsuarios(): void {
     this._usuarioService.findAllCustom().subscribe({
       next: (response: UsuarioResponseDTO[]) => {
         this.usuarios = response;
-        this._cdr.markForCheck();
       },
       error: (err: AppApiError) => {
         this.errorMessage = `Error ${err.status} - ${err.message}`;
-        this._cdr.markForCheck();
-      }
+      },
     });
   }
 
   onBuscarPorRecibo(): void {
     if (!this.recibo.trim()) return;
-    this.limparResultados();
-
-    this._aluguelService.findByRecibo(this.recibo).subscribe({
-      next: (response: AluguelResponseDTO) => {
-        this.resultadoRecibo = response;
-        this._cdr.markForCheck();
-      },
-      error: (err: AppApiError) => {
-        this.errorMessage = `Error ${err.status} - ${err.message}`;
-        this._cdr.markForCheck();
-      }
+    this.router.navigate([], {
+      queryParams: { recibo: this.recibo }
     });
   }
 
   onBuscarPorUsername(pagina: number = 0): void {
     if (!this.username.trim()) return;
-    this.currentPage = pagina;
-    this.limparResultados();
-
-    this._aluguelService.findAllByUsername(
-      this.username,
-      this.currentPage,
-      this.pageSize
-    )
-      .subscribe({
-        next: (response: Page<AluguelResponseDTO>) => {
-          this.page = response;
-          this.alugueis = response.content;
-          this._cdr.markForCheck();
-        },
-        error: (err: AppApiError) => {
-          this.errorMessage = `Error ${err.status} - ${err.message}`;
-          this._cdr.markForCheck();
-        }
-      });
+    this.errorMessage = '';
+    this.router.navigate([], {
+      queryParams: { username: this.username, page: 0, size: 10 }
+    });
   }
 
   goToPage(p: number): void {
-    if (p != this.currentPage) {
-      this.onBuscarPorUsername(p);
-    }
+    this.router.navigate([], {
+      queryParams: { username: this.username, page: p },
+      queryParamsHandling: 'merge'
+    });
   }
 
-  onPageSizeChange(): void {
-    this.currentPage = 0;
-    this.onBuscarPorUsername();
+  onPageSizeChange(newSize: number): void {
+    this.router.navigate([], {
+      queryParams: { username: this.username, page: 0, size: newSize },
+      queryParamsHandling: 'merge'
+    });
   }
 
-  getPageNumbers(): number[] {
-    if (!this.page) return [];
-    const start = Math.max(0, this.currentPage - 2);
-    const end = Math.min(this.page.totalPages - 1, this.currentPage + 2);
+  getPageNumbers(page: Page<AluguelResponseDTO>): number[] {
+    const start = Math.max(0, page.number - 2);
+    const end = Math.min(page.totalPages - 1, page.number + 2);
     const range: number[] = [];
     for (let i = start; i <= end; i++) range.push(i);
     return range;
@@ -108,14 +117,7 @@ export class AlugueisBusca {
   onLimpar(): void {
     this.recibo = '';
     this.username = '';
-    this.limparResultados();
-  }
-
-  private limparResultados(): void {
     this.errorMessage = '';
-    this.resultadoRecibo = null;
-    this.alugueis = [];
-    this.page = null;
-    this._cdr.markForCheck();
+    this.router.navigate([], { queryParams: {} });
   }
 }
