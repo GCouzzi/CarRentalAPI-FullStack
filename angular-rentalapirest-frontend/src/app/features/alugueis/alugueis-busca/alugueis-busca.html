@@ -47,9 +47,14 @@
               list="listaUsuarios"
               (keyup.enter)="onBuscarPorUsername()"
             />
-            <datalist id="listaUsuarios">
-              <option *ngFor="let u of usuarios" [value]="u.username"></option>
-            </datalist>
+            <ng-container *ngIf="loadUsuarios$ | async as usuarios">
+              <datalist id="listaUsuarios">
+                <option
+                  *ngFor="let u of usuarios"
+                  [value]="u.username"
+                ></option>
+              </datalist>
+            </ng-container>
             <button
               class="btn btn-primary"
               (click)="onBuscarPorUsername()"

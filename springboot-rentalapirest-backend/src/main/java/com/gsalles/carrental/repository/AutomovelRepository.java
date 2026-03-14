@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -14,4 +15,5 @@ public interface AutomovelRepository extends JpaRepository<Automovel, Long>, Jpa
     Optional<Automovel> findByPlaca(String placa);
     Page<Automovel> findAll(Pageable pageable);
     Long deleteByPlaca(String placa);
+    List<Automovel> findByStatus(Automovel.Status status);
 }

@@ -37,6 +37,6 @@ export class AutomovelService {
   }
 
   findAllCustom(): Observable<AutomovelResponseDTO[]> {
-    return this._http.get<AutomovelResponseDTO[]>(`${this.baseUrl}/all`);
+    return this._http.get<AutomovelResponseDTO[]>(`${this.baseUrl}/livres`);
   }
 }

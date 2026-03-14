@@ -2,6 +2,7 @@ package com.gsalles.carrental.service;
 
 import com.gsalles.carrental.dto.rdto.AutomovelResponseDTO;
 import com.gsalles.carrental.entity.Automovel;
+import com.gsalles.carrental.exception.AutomovelStatusUniqueViolationException;
 import com.gsalles.carrental.exception.AutomovelUniqueViolationException;
 import com.gsalles.carrental.exception.EntityNotFoundException;
 import com.gsalles.carrental.repository.AutomovelRepository;
@@ -52,8 +53,8 @@ public class AutomovelService {
     }
 
     @Transactional(readOnly = true)
-    public List<Automovel> buscarTodosCustom() {
-        return repository.findAll();
+    public List<Automovel> buscarTodosLivres() {
+        return repository.findByStatus(Automovel.Status.LIVRE);
     }
 
     @Transactional(readOnly = true)
@@ -67,7 +68,13 @@ public class AutomovelService {
 
     @Transactional
     public Automovel updateByPlaca(String placa, Automovel.Status status){
+        if(status == Automovel.Status.ALUGADO){
+            throw new AutomovelStatusUniqueViolationException("Não é possível alterar o status de um automóvel para alugado.");
+        }
         Automovel a = this.buscarPorPlaca(placa);
+        if(a.getStatus() == Automovel.Status.ALUGADO){
+            throw new AutomovelStatusUniqueViolationException("Não é possível alterar o status de um automóvel alugado.");
+        }
         a.setStatus(status);
         return repository.save(a);
     }

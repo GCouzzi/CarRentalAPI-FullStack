@@ -1,5 +1,5 @@
 import { AluguelResponseDTO } from './../../../core/models/aluguel.model';
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UsuarioResponseDTO } from '../../../core/models/user.model';
 import { AutomovelResponseDTO } from '../../../core/models/automovel.model';
@@ -7,6 +7,7 @@ import { AluguelService } from '../../../core/services/aluguel.service';
 import { UsuarioService } from '../../../core/services/usuario.service';
 import { AppApiError } from '../../../core/models/app-api-error.model';
 import { AutomovelService } from '../../../core/services/automovel.service';
+import { catchError, Observable, of } from 'rxjs';
 
 
 @Component({
@@ -15,17 +16,16 @@ import { AutomovelService } from '../../../core/services/automovel.service';
   templateUrl: './alugueis-novo.html',
   styleUrl: './alugueis-novo.scss',
 })
-export class AlugueisNovo {
+export class AlugueisNovo implements OnInit {
   form!: FormGroup;
   errorMessage = '';
   resultado: AluguelResponseDTO | null = null;
 
-  usuarios: UsuarioResponseDTO[] = [];
-  automoveis: AutomovelResponseDTO[] = [];
+  loadUsuarios$!: Observable<UsuarioResponseDTO[]>;
+  loadAutomoveis$!: Observable<AutomovelResponseDTO[]>;
 
   constructor(private readonly _fb: FormBuilder,
     private readonly _aluguelService: AluguelService,
-    private readonly _cdr: ChangeDetectorRef,
     private readonly _usuarioService: UsuarioService,
     private readonly _automovelService: AutomovelService) { }
 
@@ -44,34 +44,19 @@ export class AlugueisNovo {
       ]]
     });
 
-    this.loadUsuarios();
-    this.loadAutomoveis();
-  }
-
-  loadUsuarios(): void {
-    this._usuarioService.findAllCustom().subscribe({
-      next: (response: UsuarioResponseDTO[]) => {
-        this.usuarios = response;
-        this._cdr.markForCheck();
-      },
-      error: (err: AppApiError) => {
+    this.loadUsuarios$ = this._usuarioService.findAllCustom().pipe(
+      catchError((err: AppApiError) => {
         this.errorMessage = `Error ${err.status} - ${err.message}`;
-        this._cdr.markForCheck();
-      }
-    });
-  }
+        return of([]);
+      })
+    )
 
-  loadAutomoveis(): void {
-    this._automovelService.findAllCustom().subscribe({
-      next: (response: AutomovelResponseDTO[]) => {
-        this.automoveis = response;
-        this._cdr.markForCheck();
-      },
-      error: (err: AppApiError) => {
+    this.loadAutomoveis$ = this._automovelService.findAllCustom().pipe(
+      catchError((err: AppApiError) => {
         this.errorMessage = `Error ${err.status} - ${err.message}`;
-        this._cdr.markForCheck();
-      }
-    });
+        return of([]);
+      })
+    )
   }
 
   onSubmit(): void {
@@ -87,11 +72,9 @@ export class AlugueisNovo {
     this._aluguelService.checkin(this.form.value).subscribe({
       next: (response: AluguelResponseDTO) => {
         this.resultado = response;
-        this._cdr.markForCheck();
       },
       error: (err: AppApiError) => {
         this.errorMessage = `Error ${err.status} - ${err.message}`;
-        this._cdr.markForCheck();
       }
     })
   }

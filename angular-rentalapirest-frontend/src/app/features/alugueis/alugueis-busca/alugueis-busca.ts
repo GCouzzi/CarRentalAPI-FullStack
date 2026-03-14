@@ -5,7 +5,7 @@ import { Page } from '../../../core/models/page.model';
 import { AluguelService } from '../../../core/services/aluguel.service';
 import { UsuarioService } from '../../../core/services/usuario.service';
 import { AppApiError } from '../../../core/models/app-api-error.model';
-import { catchError, Observable, of, switchMap, tap } from 'rxjs';
+import { catchError, EMPTY, Observable, of, switchMap, tap } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
@@ -18,10 +18,10 @@ export class AlugueisBusca {
   recibo = '';
   username = '';
   errorMessage = '';
-  usuarios: UsuarioResponseDTO[] = [];
 
   resultadoRecibo$!: Observable<AluguelResponseDTO | null>;
   resultadoUsername$!: Observable<Page<AluguelResponseDTO> | null>;
+  loadUsuarios$!: Observable<UsuarioResponseDTO[]>;
 
   constructor(
     private readonly _aluguelService: AluguelService,
@@ -31,7 +31,12 @@ export class AlugueisBusca {
   ) {}
 
   ngOnInit(): void {
-    this.loadUsuarios();
+    this.loadUsuarios$ = this._usuarioService.findAllCustom().pipe(
+      catchError((err: AppApiError) => {
+        this.errorMessage = `Error ${err.status} - ${err.message}`;
+        return of([]);
+      })
+    )
 
     this.resultadoRecibo$ = this.route.queryParams.pipe(
       tap(params => {
@@ -64,17 +69,6 @@ export class AlugueisBusca {
         );
       })
     );
-  }
-
-  loadUsuarios(): void {
-    this._usuarioService.findAllCustom().subscribe({
-      next: (response: UsuarioResponseDTO[]) => {
-        this.usuarios = response;
-      },
-      error: (err: AppApiError) => {
-        this.errorMessage = `Error ${err.status} - ${err.message}`;
-      },
-    });
   }
 
   onBuscarPorRecibo(): void {
