@@ -16,7 +16,7 @@ Este é um sistema para gerenciamento de aluguéis de veículos, desenvolvido pa
 ## 🚀 Funcionalidades do Sistema
 O sistema possui diferentes níveis de acesso (Roles), garantindo que cada usuário visualize e interaja apenas com os recursos permitidos.
 
-** Credenciais usuário admin: ```username: userAdmin``` & ```password:admin123``` **
+** Credenciais usuário admin: ```username: userAdmin``` & ```password: admin123``` **
 
 ### 📋 Gestão de Aluguéis
 #### Módulo do Cliente:
