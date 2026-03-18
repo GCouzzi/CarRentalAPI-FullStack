@@ -1,68 +1,136 @@
-# Car Rental System - Full Stack Application 🚗💨
+# Car Rental System — Full Stack Application 🚗💨
 
-Este é um sistema para gerenciamento de aluguéis de veículos, desenvolvido para automatizar o processo de check-in, check-out e controle de frotas. O projeto aplica padrões de arquitetura modernos para garantir performance e segurança.
+![Java](https://img.shields.io/badge/Java-17-orange?logo=openjdk)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3-6DB33F?logo=springboot)
+![Angular](https://img.shields.io/badge/Angular-18-DD0031?logo=angular)
+![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?logo=mysql)
+![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker)
 
-## Tecnologias Principais
-
-### Backend 
-- **Java 17** & **Spring Boot 3**
-
-### Frontend 
-- **Angular 18**
-- **Bootstrap** & **Bootstrap Icons**
+Sistema para gerenciamento de aluguéis de veículos, desenvolvido para automatizar o processo de check-in, check-out e controle de frotas. O projeto aplica padrões de arquitetura modernos para garantir performance e segurança.
 
 ---
 
-## 🚀 Funcionalidades do Sistema
-O sistema possui diferentes níveis de acesso (Roles), garantindo que cada usuário visualize e interaja apenas com os recursos permitidos.
+## 📐 Arquitetura
 
-**⚠️ Credenciais apenas para ambiente de demonstração local**
-- Credenciais usuário admin: ```username: userAdmin``` & ```password: admin123```**
+```
+┌─────────────────────┐       ┌──────────────────────┐       ┌──────────────┐
+│   Frontend          │       │   Backend            │       │   Banco de   │
+│   Angular 18        │──────▶│   Spring Boot 3      │──────▶│   Dados      │
+│   :80               │       │   :8080              │       │   MySQL :3306│
+└─────────────────────┘       └──────────────────────┘       └──────────────┘
+         └────────────────────── Docker Compose ───────────────────────┘
+```
+
+```
+CarRentalAPI-FullStack/
+├── backend/           # API REST em Spring Boot
+├── frontend/          # SPA em Angular
+├── docker-compose.yml # Orquestração dos containers
+└── README.md
+```
+
+---
+
+## 🛠️ Tecnologias
+
+### Backend
+
+| Tecnologia | Utilização |
+| --- | --- |
+| **Java 17 + Spring Boot 3** | Framework principal para criação e execução da API REST |
+| **Spring Security + JWT** | Autenticação e autorização via JSON Web Token |
+| **Spring Data JPA** | Abstração para persistência e operações com banco de dados |
+| **Spring HATEOAS** | Suporte a hiperlinks nas respostas (REST HATEOAS) |
+| **Spring WebFlux + WebTestClient** | Testes de integração dos endpoints |
+| **Swagger / Springdoc OpenAPI** | Geração automática de documentação interativa |
+| **ModelMapper** | Mapeamento entre entidades e DTOs |
+| **Lombok** | Redução de código boilerplate |
+| **MySQL** | Banco de dados relacional principal |
+| **PostgreSQL** | Utilizado em testes de integração |
+| **Docker / Docker Compose** | Containerização e execução local/produção |
+
+### Frontend
+
+| Tecnologia | Utilização |
+| --- | --- |
+| **Angular 18** | Framework principal do SPA, organizado com NgModules |
+| **Angular Router** | Roteamento dinâmico com guards de autenticação por role |
+| **Reactive Forms** | Formulários reativos com validação declarativa |
+| **RxJS** | Programação reativa com Observables para consumo da API e gerenciamento de eventos assíncronos |
+| **Bootstrap + Bootstrap Icons** | Estilização e componentes visuais |
+
+---
+
+## 🚀 Funcionalidades
+
+O sistema possui diferentes níveis de acesso (Roles), garantindo que cada usuário interaja apenas com os recursos permitidos.
 
 ### 📋 Gestão de Aluguéis
-#### Módulo do Cliente:
-- Visualização histórica de todos os aluguéis vinculados ao seu perfil.
 
-#### Módulo Administrativo:
-- Painel Geral: Acesso à listagem completa de aluguéis registrados no sistema com paginação.
-- Busca Especializada: Localização de aluguéis por número de recibo ou filtragem por um usuário específico.
-- Fluxo de Operação: Realização de Check-in (abertura de aluguel) e Check-out (finalização com cálculo de valores).
+**Módulo do Cliente:**
+- Visualização do histórico de aluguéis vinculados ao seu perfil.
+
+**Módulo Administrativo:**
+- Painel geral com listagem completa de aluguéis e paginação.
+- Busca por número de recibo ou filtragem por usuário.
+- Fluxo de Check-in (abertura) e Check-out (finalização com cálculo de valores).
 
 ### 👥 Gestão de Usuários
-#### Controle Administrativo:
-- É possível listar todos os usuários do sistema e deletar os com a role CLIENTE.
-- Busca Avançada: É possível buscar usuários por CPF, E-mail ou Username, facilitando a localização rápida de clientes.
+
+**Controle Administrativo:**
+- Listagem de todos os usuários e exclusão de usuários com role `CLIENTE`.
+- Busca avançada por CPF, e-mail ou username.
 
 ### 🚗 Gestão de Automóveis
-- Catálogo de Veículos: Clientes podem pesquisar e visualizar todos os automóveis disponíveis na frota.
-- Inventário: Administradores possuem permissão para cadastrar e remover novos veículos ao sistema.
 
-
+- Catálogo de veículos disponíveis na frota (visível a clientes).
+- Cadastro e remoção de veículos (exclusivo para administradores).
 
 ---
 
-## 🚀 Como Rodar o Projeto
-A forma mais simples de subir o ambiente completo (Banco de Dados, Backend e Frontend) é utilizando o Docker, garantindo que todas as dependências estejam configuradas corretamente.
+## ▶️ Como Rodar o Projeto
 
-### 📋 Pré-requisitos
-- Docker e Docker Compose instalados.
+A forma mais simples de subir o ambiente completo é via Docker, que configura automaticamente o banco de dados, o backend e o frontend.
 
-### 🛠️ Passo a Passo
-- Clone o repositório:
-```
-bash
+### Pré-requisitos
+
+- [Docker](https://www.docker.com/) e [Docker Compose](https://docs.docker.com/compose/) instalados.
+
+### Passo a Passo
+
+**1. Clone o repositório:**
+
+```bash
 git clone https://github.com/GCouzzi/CarRentalAPI-FullStack.git
 cd CarRentalAPI-FullStack
 ```
-* Suba a aplicação com Docker: Na raiz do projeto (onde está o arquivo docker-compose.yml), execute o comando abaixo. Ele irá baixar as imagens, buildar os containers e configurar as redes automaticamente:
-```
-Bash
+
+**2. Suba os containers:**
+
+Na raiz do projeto (onde está o `docker-compose.yml`), execute:
+
+```bash
 docker-compose up --build
 ```
 
-## 🚀 Futuras Implementações
-- Adicionar página de perfil para que o usuário logado visualize seus dados
-- Possibilitar alteração de e-mail, telefone e cpf
-- Possibilitar alteração e adicionar status de manutenção e inativo para os automóveis
-- Listagem de aluguéis com possibilidade de filtro por status (em andamento, finalizado)
-- Listagem de automóveis com filtro por status (livre, alugado, manutencao, inativo), marca e modelo
+**3. Acesse a aplicação:**
+
+| Serviço | URL |
+| --- | --- |
+| Frontend (Angular) | http://localhost |
+| Backend (API REST) | http://localhost:8080 |
+| Swagger (Documentação) | http://localhost:8080/swagger-ui.html |
+
+### Credenciais de Demonstração
+
+> ⚠️ **Atenção:** As credenciais abaixo são exclusivas para ambiente local de demonstração. Não utilize em produção.
+
+| Role | Username | Password |
+| --- | --- | --- |
+| Admin | `userAdmin` | `admin123` |
+
+---
+
+## 📄 Licença
+
+Este projeto está sob a licença [MIT](./LICENSE). Veja o arquivo `LICENSE` para mais detalhes.
