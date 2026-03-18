@@ -47,7 +47,6 @@ CarRentalAPI-FullStack/
 | **Lombok** | Redução de código boilerplate |
 | **MySQL** | Banco de dados relacional principal |
 | **PostgreSQL** | Utilizado em testes de integração |
-| **Docker / Docker Compose** | Containerização e execução local/produção |
 
 ### Frontend
 
