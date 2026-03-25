@@ -85,9 +85,4 @@ export class AlugueisNovo implements OnInit {
     this.resultado = null;
   }
 
-  getFieldClass(field: string): string {
-    const control = this.form.get(field);
-    if (!control || !control.touched) return '';
-    return control.invalid ? 'is-invalid' : 'is-valid';
-  }
 }

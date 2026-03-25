@@ -224,7 +224,9 @@
                 <td>
                   <span
                     class="badge rounded-pill"
-                    [ngClass]="aluguel.dataFim ? 'bg-success' : 'bg-warning text-dark'"
+                    [class.bg-success]="aluguel.dataFim"
+                    [class.bg-warning]="!aluguel.dataFim"
+                    [class.text-dark]="!aluguel.dataFim"
                   >
                     {{ aluguel.dataFim ? 'Finalizado' : 'Em andamento' }}
                   </span>

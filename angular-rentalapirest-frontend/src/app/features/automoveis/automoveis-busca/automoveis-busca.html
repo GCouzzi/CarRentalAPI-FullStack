@@ -97,12 +97,37 @@
             <p class="text-muted small text-uppercase fw-semibold mb-1">
               Status
             </p>
-            <span
-              class="badge rounded-pill"
-              [ngClass]="automovel.status === 'LIVRE' ? 'bg-success' : 'bg-danger'"
-            >
-              {{ automovel.status === 'LIVRE' ? 'Livre' : 'Alugado' }}
-            </span>
+            <div class="d-flex align-items-center gap-2">
+              <span
+                class="badge rounded-pill"
+                [ngClass]="{
+        'bg-success':           automovel.status === 'LIVRE',
+        'bg-danger':            automovel.status === 'ALUGADO',
+        'bg-warning text-dark': automovel.status === 'MANUTENCAO',
+        'bg-secondary':         automovel.status === 'INATIVO'
+      }"
+              >
+                {{ automovel.status === 'LIVRE' ? 'Livre' : automovel.status ===
+                'ALUGADO' ? 'Alugado' : automovel.status === 'MANUTENCAO' ?
+                'Manutenção' : 'Inativo' }}
+              </span>
+              @if(isAdmin && automovel.status !== 'ALUGADO'){
+              <select
+                class="form-select form-select-sm w-auto"
+                [(ngModel)]="novoStatus"
+                (change)="onAlterarStatus(automovel.placa)"
+              >
+                <option value="" disabled selected>Alterar status</option>
+                <option
+                  *ngFor="let opt of statusOptions"
+                  [value]="opt.valor"
+                  [disabled]="opt.valor === 'ALUGADO'"
+                >
+                  {{ opt.label }}
+                </option>
+              </select>
+              }
+            </div>
           </div>
         </div>
       </div>

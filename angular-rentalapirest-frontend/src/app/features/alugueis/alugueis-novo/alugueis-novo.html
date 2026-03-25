@@ -20,7 +20,8 @@
               formControlName="usuarioUsername"
               placeholder="Ex: joao.silva"
               list="listaUsuarios"
-              [ngClass]="getFieldClass('usuarioUsername')"
+              [class.is-invalid]="form.get('usuarioUsername')?.touched && form.get('usuarioUsername')?.invalid"
+              [class.is-valid]="form.get('usuarioUsername')?.touched && form.get('usuarioUsername')?.valid"
             />
             <ng-container *ngIf="loadUsuarios$ | async as usuarios">
               <datalist id="listaUsuarios">
@@ -52,7 +53,8 @@
               placeholder="Ex: ABC-1234"
               maxlength="8"
               list="listaPlacas"
-              [ngClass]="getFieldClass('automovelPlaca')"
+              [class.is-invalid]="form.get('automovelPlaca')?.touched && form.get('automovelPlaca')?.invalid"
+              [class.is-valid]="form.get('automovelPlaca')?.touched && form.get('automovelPlaca')?.valid"
             />
             <ng-container *ngIf="loadAutomoveis$ | async as automoveis">
               <datalist id="listaPlacas">

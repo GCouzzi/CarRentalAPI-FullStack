@@ -11,8 +11,8 @@ const routes: Routes = [
     component: Usuarios,
     children: [
       { path: '', redirectTo: 'lista', pathMatch: 'full' },
-      { path: 'lista', component: UsuariosLista, canActivate: [adminGuard] },
-      { path: 'busca', component: UsuariosBusca, canActivate: [adminGuard] },
+      { path: 'lista', component: UsuariosLista, canActivate: [adminGuard], title: 'Listar usuários' },
+      { path: 'busca', component: UsuariosBusca, canActivate: [adminGuard], title: 'Buscar usuário' },
     ]
   }
 ];

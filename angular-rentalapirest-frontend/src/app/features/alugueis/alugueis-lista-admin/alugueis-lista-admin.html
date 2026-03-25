@@ -6,6 +6,41 @@
   </div>
 
   <div class="card shadow-sm border-0">
+    <div
+      class="card-header bg-white border-bottom d-flex align-items-center gap-2 py-3"
+    >
+      <small class="text-muted fw-semibold me-1">Filtrar:</small>
+      <div class="btn-group btn-group-sm" role="group">
+        <button
+          type="button"
+          class="btn"
+          [class.btn-primary]="filtroAtivo === 'todos'"
+          [class.btn-outline-primary]="filtroAtivo !== 'todos'"
+          (click)="setFiltro('todos')"
+        >
+          Todos
+        </button>
+        <button
+          type="button"
+          class="btn"
+          [class.btn-warning]="filtroAtivo === 'false'"
+          [class.btn-outline-warning]="filtroAtivo !== 'false'"
+          (click)="setFiltro('false')"
+        >
+          Em andamento
+        </button>
+        <button
+          type="button"
+          class="btn"
+          [class.btn-success]="filtroAtivo === 'true'"
+          [class.btn-outline-success]="filtroAtivo !== 'true'"
+          (click)="setFiltro('true')"
+        >
+          Finalizados
+        </button>
+      </div>
+    </div>
+
     <ng-container *ngIf="page$ | async as page">
       <div class="card-body p-0">
         <div class="table-responsive">

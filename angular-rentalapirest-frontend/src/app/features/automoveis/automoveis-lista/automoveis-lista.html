@@ -6,6 +6,98 @@
   </div>
 
   <div class="card shadow-sm border-0">
+    <div class="card-header bg-white border-bottom py-3">
+      <div class="d-flex flex-wrap align-items-end gap-3">
+        <div class="d-flex flex-column gap-1">
+          <small class="text-muted fw-semibold">Status</small>
+          <div class="btn-group btn-group-sm" role="group">
+            <button
+              type="button"
+              class="btn"
+              [class.btn-primary]="statusAtivo === 'todos'"
+              [class.btn-outline-primary]="statusAtivo !== 'todos'"
+              (click)="setStatus('todos')"
+            >
+              Todos
+            </button>
+            <button
+              type="button"
+              class="btn"
+              [class.btn-success]="statusAtivo === 'LIVRE'"
+              [class.btn-outline-success]="statusAtivo !== 'LIVRE'"
+              (click)="setStatus('LIVRE')"
+            >
+              Livre
+            </button>
+            <button
+              type="button"
+              class="btn"
+              [class.btn-danger]="statusAtivo === 'ALUGADO'"
+              [class.btn-outline-danger]="statusAtivo !== 'ALUGADO'"
+              (click)="setStatus('ALUGADO')"
+            >
+              Alugado
+            </button>
+            <button
+              type="button"
+              class="btn"
+              [class.btn-warning]="statusAtivo === 'MANUTENCAO'"
+              [class.btn-outline-warning]="statusAtivo !== 'MANUTENCAO'"
+              (click)="setStatus('MANUTENCAO')"
+            >
+              Manutenção
+            </button>
+            <button
+              type="button"
+              class="btn"
+              [class.btn-secondary]="statusAtivo === 'INATIVO'"
+              [class.btn-outline-secondary]="statusAtivo !== 'INATIVO'"
+              (click)="setStatus('INATIVO')"
+            >
+              Inativo
+            </button>
+          </div>
+        </div>
+
+        <div class="d-flex flex-column gap-1">
+          <small class="text-muted fw-semibold">Marca</small>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            placeholder="Ex: Toyota"
+            [(ngModel)]="marcaInput"
+            (keyup.enter)="aplicarFiltrosTexto()"
+          />
+        </div>
+
+        <div class="d-flex flex-column gap-1">
+          <small class="text-muted fw-semibold">Modelo</small>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            placeholder="Ex: Corolla"
+            [(ngModel)]="modeloInput"
+            (keyup.enter)="aplicarFiltrosTexto()"
+          />
+        </div>
+
+        <div class="d-flex gap-2 align-items-end">
+          <button
+            class="btn btn-sm btn-primary"
+            (click)="aplicarFiltrosTexto()"
+          >
+            <i class="bi bi-search me-1"></i>Buscar
+          </button>
+          <button
+            class="btn btn-sm btn-outline-secondary"
+            (click)="limparFiltros()"
+          >
+            <i class="bi bi-x-circle me-1"></i>Limpar
+          </button>
+        </div>
+      </div>
+    </div>
+
     <ng-container *ngIf="page$ | async as page">
       <div class="card-body p-0">
         <div class="table-responsive">
@@ -57,9 +149,16 @@
                 <td>
                   <span
                     class="badge rounded-pill"
-                    [ngClass]="auto.status === 'LIVRE' ? 'bg-success' : 'bg-danger'"
+                    [ngClass]="{
+                      'bg-success':   auto.status === 'LIVRE',
+                      'bg-danger':    auto.status === 'ALUGADO',
+                      'bg-warning text-dark': auto.status === 'MANUTENCAO',
+                      'bg-secondary': auto.status === 'INATIVO'
+                    }"
                   >
-                    {{ auto.status === 'LIVRE' ? 'Livre' : 'Alugado' }}
+                    {{ auto.status === 'LIVRE' ? 'Livre' : auto.status ===
+                    'ALUGADO' ? 'Alugado' : auto.status === 'MANUTENCAO' ?
+                    'Manutenção' : 'Inativo' }}
                   </span>
                 </td>
                 @if(isAdmin){

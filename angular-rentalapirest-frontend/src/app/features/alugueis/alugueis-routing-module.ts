@@ -16,12 +16,12 @@ const routes: Routes = [
     component: Alugueis,
     children: [
       { path: '', redirectTo: 'lista', pathMatch: 'full' },
-      { path: 'lista', component: AlugueisLista, canActivate: [authGuard] },
-      { path: 'checkin', component: AlugueisNovo, canActivate: [adminGuard] },
-      { path: 'checkout', component: AlugueisCheckout, canActivate: [adminGuard] },
-      { path: 'busca', component: AlugueisBusca, canActivate: [adminGuard] },
-      { path: 'busca/:recibo', component: AlugueisBusca, canActivate: [adminGuard] },
-      { path: 'todos', component: AlugueisListaAdmin, canActivate: [adminGuard] }
+      { path: 'lista', component: AlugueisLista, canActivate: [authGuard], title: 'Meus aluguéis' },
+      { path: 'checkin', component: AlugueisNovo, canActivate: [adminGuard], title: 'Check-in' },
+      { path: 'checkout', component: AlugueisCheckout, canActivate: [adminGuard], title: 'Check-out' },
+      { path: 'busca', component: AlugueisBusca, canActivate: [adminGuard], title: 'Buscar aluguéis' },
+      { path: 'busca/:recibo', component: AlugueisBusca, canActivate: [adminGuard], title: 'Buscar aluguel' },
+      { path: 'todos', component: AlugueisListaAdmin, canActivate: [adminGuard], title: 'Todos aluguéis' }
     ]
   }
 ];
