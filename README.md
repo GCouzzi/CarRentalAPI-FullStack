@@ -66,27 +66,31 @@ O sistema possui diferentes níveis de acesso (Roles), garantindo que cada usuá
 
 ### 📋 Gestão de Aluguéis
 
-**Módulo do Cliente:**
+**Administrador e Cliente:**
 - Visualização do histórico de aluguéis vinculados ao seu perfil.
 
-**Módulo Administrativo:**
+**Administrador:**
 - Painel geral com listagem completa de aluguéis, paginação e filtragem.
 - Busca por número de recibo ou filtragem por usuário.
 - Fluxo de Check-in (abertura) e Check-out (finalização com cálculo de valores).
 
 ### 👥 Gestão de Usuários
 
-**Controle Administrativo:**
+**Administrador:**
 - Listagem de todos os usuários e exclusão de usuários com role `CLIENTE`.
 - Busca avançada por CPF, e-mail ou username.
 
 ### 🚗 Gestão de Automóveis
 
+**Administrador e Cliente:**
 - Catálogo de veículos disponíveis na frota com possibilidade de filtro e busca por placa. (visível a clientes).
+
+**Administrador:**
 - Cadastro, remoção de veículos e alteração de status (exclusivo para administradores).
 
 ### 👤 Perfil
 
+**Administrador e Cliente:**
 - Visualização dos dados de usuário
 - Alteração de dados de contato
 - Alteração de senha
