@@ -216,7 +216,7 @@ public class UsuarioController {
 
     @PatchMapping(value = "/me/password", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    @PreAuthorize("hasAnyRole('ADMIN', 'CLIENTE') AND #id == authentication.principal.id")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLIENTE')")
     @Operation(
             summary = "Alterar senha de usuário",
             description = "Operação para alterar usuário senha por id. Requer autenticação com bearer token.",
@@ -247,9 +247,8 @@ public class UsuarioController {
                     @ApiResponse(description = "Usuário sem permissão", responseCode = "403")
             }
     )
-    public ResponseEntity<Void> updatePassword(@PathVariable Long id,
-                                               @Valid @RequestBody UsuarioPasswordDTO senhaDto) {
-        usuarioService.alterarSenha(id, senhaDto.getSenhaAtual(), senhaDto.getNovaSenha(),
+    public ResponseEntity<Void> updatePassword(@Valid @RequestBody UsuarioPasswordDTO senhaDto, @AuthenticationPrincipal JwtUserDetails userDetails) {
+        usuarioService.alterarSenha(userDetails.getId(), senhaDto.getSenhaAtual(), senhaDto.getNovaSenha(),
                 senhaDto.getConfirmarSenha());
         return ResponseEntity.noContent().build();
     }

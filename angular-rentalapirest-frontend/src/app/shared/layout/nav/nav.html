@@ -1,39 +1,48 @@
-<nav
-  class="navbar bg-primary w-100 d-flex align-items-center p-4 flex-wrap"
-  data-bs-theme="dark"
->
-  <a class="navbar-brand" routerLink="/home">
-    <i class="bi bi-car-front fs-3"></i>
-    RentalAPI System
-  </a>
-  <ul class="navbar-nav d-flex flex-row gap-4 flex-wrap">
-    <li class="nav-item">
-      <a
-        class="nav-link text-white fw-semibold link-hover"
-        routerLink="/automoveis"
-        >Automóveis</a
-      >
-    </li>
-    @if(isAdmin){
-    <li class="nav-item">
-      <a
-        class="nav-link text-white fw-semibold link-hover"
-        routerLink="/usuarios"
-        >Usuários</a
-      >
-    </li>
-    }
-    <li class="nav-item">
-      <a
-        class="nav-link text-white fw-semibold link-hover"
-        routerLink="/alugueis"
-        >Aluguéis</a
-      >
-    </li>
-    <li class="nav-item">
-      <a class="btn btn-danger text-white link-hover-red" (click)="onLogout()"
-        >Sair</a
-      >
-    </li>
-  </ul>
-</nav>
+<header>
+  <nav
+    class="navbar bg-primary w-100 d-flex align-items-center p-4 flex-wrap"
+    data-bs-theme="dark"
+  >
+    <a class="navbar-brand" routerLink="/home">
+      <i class="bi bi-car-front fs-3"></i>
+      RentalAPI System
+    </a>
+    <ul class="navbar-nav d-flex flex-row gap-4 flex-wrap">
+      <li class="nav-item">
+        <a
+          class="nav-link text-white fw-semibold link-hover"
+          routerLink="/me"
+          >Perfil</a
+        >
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link text-white fw-semibold link-hover"
+          routerLink="/automoveis"
+          >Automóveis</a
+        >
+      </li>
+      @if(isAdmin){
+      <li class="nav-item">
+        <a
+          class="nav-link text-white fw-semibold link-hover"
+          routerLink="/usuarios"
+          >Usuários</a
+        >
+      </li>
+      }
+      <li class="nav-item">
+        <a
+          class="nav-link text-white fw-semibold link-hover"
+          routerLink="/alugueis"
+          >Aluguéis</a
+        >
+      </li>
+      <li class="nav-item">
+        <a class="btn btn-danger text-white link-hover-red" (click)="onLogout()"
+          >Sair</a
+        >
+      </li>
+    </ul>
+  </nav>
+</header>
