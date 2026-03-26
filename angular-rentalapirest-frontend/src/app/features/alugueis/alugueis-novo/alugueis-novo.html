@@ -20,13 +20,16 @@
               formControlName="usuarioUsername"
               placeholder="Ex: joao.silva"
               list="listaUsuarios"
-              [ngClass]="getFieldClass('usuarioUsername')"
+              [class.is-invalid]="form.get('usuarioUsername')?.touched && form.get('usuarioUsername')?.invalid"
+              [class.is-valid]="form.get('usuarioUsername')?.touched && form.get('usuarioUsername')?.valid"
             />
-            <datalist id="listaUsuarios">
-              <option *ngFor="let u of usuarios" [value]="u.username">
-                {{ u.username }}
-              </option>
-            </datalist>
+            <ng-container *ngIf="loadUsuarios$ | async as usuarios">
+              <datalist id="listaUsuarios">
+                <option *ngFor="let u of usuarios" [value]="u.username">
+                  {{ u.username }}
+                </option>
+              </datalist>
+            </ng-container>
             <div class="invalid-feedback">
               <ng-container
                 *ngIf="form.get('usuarioUsername')?.errors?.['required']"
@@ -50,13 +53,16 @@
               placeholder="Ex: ABC-1234"
               maxlength="8"
               list="listaPlacas"
-              [ngClass]="getFieldClass('automovelPlaca')"
+              [class.is-invalid]="form.get('automovelPlaca')?.touched && form.get('automovelPlaca')?.invalid"
+              [class.is-valid]="form.get('automovelPlaca')?.touched && form.get('automovelPlaca')?.valid"
             />
-            <datalist id="listaPlacas">
-              <option *ngFor="let a of automoveis" [value]="a.placa">
-                {{ a.marca }} {{ a.modelo }}
-              </option>
-            </datalist>
+            <ng-container *ngIf="loadAutomoveis$ | async as automoveis">
+              <datalist id="listaPlacas">
+                <option *ngFor="let a of automoveis" [value]="a.placa">
+                  {{ a.marca }} {{ a.modelo }}
+                </option>
+              </datalist>
+            </ng-container>
             <div class="invalid-feedback">
               <ng-container
                 *ngIf="form.get('automovelPlaca')?.errors?.['required']"

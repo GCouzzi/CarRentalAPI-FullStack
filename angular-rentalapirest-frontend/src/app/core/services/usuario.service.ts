@@ -9,16 +9,20 @@ import { Page } from '../models/page.model';
   providedIn: 'root',
 })
 export class UsuarioService {
-
   private baseUrl = 'http://localhost:8080/api/v1/usuarios';
 
-  constructor(private readonly _http: HttpClient) { }
+  constructor(private readonly _http: HttpClient) {}
 
   register(credentials: RegisterRequest): Observable<UsuarioResponseDTO> {
     return this._http.post<UsuarioResponseDTO>(`${this.baseUrl}`, credentials);
   }
 
-  findAll(page: number = 0, size: number = 10, sortBy: string = 'id', direction: string = 'asc'): Observable<Page<UsuarioResponseDTO>> {
+  findAll(
+    page: number = 0,
+    size: number = 10,
+    sortBy: string = 'id',
+    direction: string = 'asc',
+  ): Observable<Page<UsuarioResponseDTO>> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString())
@@ -38,21 +42,49 @@ export class UsuarioService {
 
   findByEmail(email: string): Observable<UsuarioResponseDTO> {
     const encodedEmail = encodeURIComponent(email);
-    return this._http.get<UsuarioResponseDTO>(`${this.baseUrl}/email/${encodedEmail}`);
+    return this._http.get<UsuarioResponseDTO>(
+      `${this.baseUrl}/email/${encodedEmail}`,
+    );
   }
 
   findByCpf(cpf: string): Observable<UsuarioResponseDTO> {
     const cleanCpf = cpf.replace(/\D/g, '');
-    const encodedCpf = encodeURIComponent(cleanCpf)
-    return this._http.get<UsuarioResponseDTO>(`${this.baseUrl}/cpf/${encodedCpf}`);
+    const encodedCpf = encodeURIComponent(cleanCpf);
+    return this._http.get<UsuarioResponseDTO>(
+      `${this.baseUrl}/cpf/${encodedCpf}`,
+    );
   }
 
   findByUsername(username: string): Observable<UsuarioResponseDTO> {
-    const encodedUsername = encodeURIComponent(username)
-    return this._http.get<UsuarioResponseDTO>(`${this.baseUrl}/username/${encodedUsername}`);
+    const encodedUsername = encodeURIComponent(username);
+    return this._http.get<UsuarioResponseDTO>(
+      `${this.baseUrl}/username/${encodedUsername}`,
+    );
   }
 
-  deleteById(id: number): Observable<void>{
+  deleteById(id: number): Observable<void> {
     return this._http.delete<void>(`${this.baseUrl}/${id}`);
+  }
+
+  getMe(): Observable<UsuarioResponseDTO> {
+    return this._http.get<UsuarioResponseDTO>(`${this.baseUrl}/me`);
+  }
+
+  updateContato(dto: {
+    email?: string;
+    telefone?: string;
+  }): Observable<UsuarioResponseDTO> {
+    return this._http.patch<UsuarioResponseDTO>(
+      `${this.baseUrl}/me/contact`,
+      dto,
+    );
+  }
+
+  updatePassword(dto: {
+    senhaAtual: string;
+    novaSenha: string;
+    confirmarSenha: string;
+  }): Observable<void> {
+    return this._http.patch<void>(`${this.baseUrl}/me/password`, dto);
   }
 }

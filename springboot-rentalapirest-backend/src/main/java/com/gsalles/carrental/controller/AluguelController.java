@@ -226,7 +226,8 @@ public class AluguelController {
                     @Parameter(name = "page", description = "Número da página a ser retornada (começa em 0)", example = "0"),
                     @Parameter(name = "size", description = "Quantidade de registros por página", example = "10"),
                     @Parameter(name = "sortBy", description = "Campo para ordenação", example = "id"),
-                    @Parameter(name = "direction", description = "Direção da ordenação: asc ou desc", example = "asc")
+                    @Parameter(name = "direction", description = "Direção da ordenação: asc ou desc", example = "asc"),
+                    @Parameter(name = "finalizado", description = "Filtrar por status: true = finalizados, false = em andamento", example = "true", required = false)
             },
             security = @SecurityRequirement(name = "security"),
             responses = {
@@ -294,49 +295,17 @@ public class AluguelController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String direction) {
-        Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<AluguelResponseDTO> list = AluguelMapper.toListDto(usuarioAutomovelService.buscarTodos(pageable));
-        list.forEach(dto -> dto.add(linkTo(methodOn(AluguelController.class).getByRecibo(dto.getAutomovelRecibo())).withRel("Self")));
-        return ResponseEntity.ok(list);
-    }
-
-    @Operation(
-            summary = "Operação de filtrar todos os aluguéis por status.",
-            description = "Operação para listar aluguéis filtrando por status.",
-            tags = {"Aluguel"},
-            parameters = {
-                    @Parameter(name = "page", description = "Número da página a ser retornada (começa em 0)", example = "0"),
-                    @Parameter(name = "size", description = "Quantidade de registros por página", example = "10"),
-                    @Parameter(name = "sortBy", description = "Campo para ordenação", example = "id"),
-                    @Parameter(name = "direction", description = "Direção da ordenação: asc ou desc", example = "asc"),
-                    @Parameter(name = "finalizado", description = "Aluguel com status finalizado", example = "true")
-            },
-            security = @SecurityRequirement(name = "security"),
-            responses = {
-                    @ApiResponse(
-                            description = "Operação de listagem realizada com sucesso",
-                            responseCode = "200",
-                            content = {
-                                    @Content(mediaType = "application/json", schema = @Schema(implementation = AluguelResponseDTO.class)),
-                                    @Content(mediaType = "application/xml", schema = @Schema(implementation = AluguelResponseDTO.class))
-                            }
-                    ),
-                    @ApiResponse(description = "Usuário não está autenticado.", responseCode = "401"),
-            }
-    )
-    @GetMapping(value = "/all", params = "finalizado", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    @PreAuthorize("hasAnyRole('CLIENTE', 'ADMIN')")
-    public ResponseEntity<Page<AluguelResponseDTO>> getAllAlugueisFilterStatus(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String direction,
-            @RequestParam Boolean finalizado) {
+            @RequestParam(required = false) Boolean finalizado) {
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<AluguelResponseDTO> list = AluguelMapper.toListDto(usuarioAutomovelService.buscarTodosAlugueisPorStatus(finalizado, pageable));
+        Page<AluguelResponseDTO> list =
+                finalizado != null
+                        ?
+                        AluguelMapper.toListDto(usuarioAutomovelService.buscarTodosAlugueisPorStatus(finalizado, pageable))
+                        :
+                        AluguelMapper.toListDto(usuarioAutomovelService.buscarTodos(pageable));
+        list.forEach(dto -> dto.add(linkTo(methodOn(AluguelController.class).getByRecibo(dto.getAutomovelRecibo())).withRel("Self")));
         return ResponseEntity.ok(list);
     }
 }

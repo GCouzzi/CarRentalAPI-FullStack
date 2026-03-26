@@ -63,10 +63,4 @@ export class AutomoveisNovo implements OnInit {
     this.errorMessage = '';
     this.sucesso = false;
   }
-
-  getFieldClass(field: string): string {
-    const control = this.form.get(field);
-    if (!control || !control.touched) return '';
-    return control.invalid ? 'is-invalid' : 'is-valid';
-  }
 }

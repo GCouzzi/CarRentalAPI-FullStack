@@ -49,7 +49,7 @@ public class ApiExceptionHandler {
                 .body(new ErrorMessage(request, HttpStatus.NOT_FOUND, ex.getMessage()));
     }
 
-    @ExceptionHandler({PasswordInvalidException.class})
+    @ExceptionHandler({PasswordInvalidException.class, AutomovelStatusUniqueViolationException.class})
     public ResponseEntity<ErrorMessage> passwordInvalidException(PasswordInvalidException ex,
                                                                  HttpServletRequest request) {
         log.error("Api error - ", ex);

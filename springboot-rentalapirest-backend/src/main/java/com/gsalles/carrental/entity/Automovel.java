@@ -29,9 +29,9 @@ public class Automovel {
 	private String placa;
 	@Column(name = "valor_por_minuto", columnDefinition = "decimal(8,2)")
 	private BigDecimal valorPorMinuto;
-	@Column(name = "status", nullable = false)
     @OneToMany(mappedBy = "automovel", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<UsuarioAutomovel> alugueis;
+    @Column(name = "status", nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Status status = Status.LIVRE;
 	public enum Status{

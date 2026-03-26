@@ -17,7 +17,7 @@
               type="text"
               class="form-control font-monospace"
               [(ngModel)]="recibo"
-              placeholder="Ex: REC-001"
+              placeholder="Ex: 20260325104032"
               (keyup.enter)="onCheckout()"
             />
             <button class="btn btn-primary" (click)="onCheckout()" [disabled]="!recibo.trim()">

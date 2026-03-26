@@ -1,0 +1,243 @@
+<div class="container py-4">
+  <header class="d-flex align-items-center mb-4">
+    <h2 class="mb-0 fw-bold">
+      <i class="bi bi-person-circle text-primary me-2"></i>Meu Perfil
+    </h2>
+  </header>
+
+  @if(errorMessage){
+  <div class="alert alert-danger d-flex align-items-center gap-2" role="alert">
+    <i class="bi bi-exclamation-triangle-fill"></i>{{ errorMessage }}
+  </div>
+  }
+
+  <section
+    class="card shadow-sm border-0"
+    *ngIf="usuario$ | async as usuario"
+    aria-label="Perfil do usuário"
+  >
+    <div class="card-body tab-content p-4">
+      <section
+        class="tab-pane fade show active"
+        id="tab-perfil"
+        role="tabpanel"
+        aria-label="Dados do perfil"
+      >
+        <dl class="row g-3">
+          <div class="col-sm-6 col-md-4">
+            <dt class="text-muted small text-uppercase fw-semibold mb-1">
+              Username
+            </dt>
+            <dd class="fw-medium mb-0">{{ usuario.username }}</dd>
+          </div>
+          <div class="col-sm-6 col-md-4">
+            <dt class="text-muted small text-uppercase fw-semibold mb-1">
+              Nome Completo
+            </dt>
+            <dd class="fw-medium mb-0">{{ usuario.nomeCompleto }}</dd>
+          </div>
+          <div class="col-sm-6 col-md-4">
+            <dt class="text-muted small text-uppercase fw-semibold mb-1">
+              CPF
+            </dt>
+            <dd class="fw-medium mb-0">{{ usuario.cpf }}</dd>
+          </div>
+          <div class="col-sm-6 col-md-4">
+            <dt class="text-muted small text-uppercase fw-semibold mb-1">
+              Email
+            </dt>
+            <dd class="fw-medium mb-0">{{ usuario.email }}</dd>
+          </div>
+          <div class="col-sm-6 col-md-4">
+            <dt class="text-muted small text-uppercase fw-semibold mb-1">
+              Telefone
+            </dt>
+            <dd class="fw-medium mb-0">{{ usuario.telefone }}</dd>
+          </div>
+          <div class="col-sm-6 col-md-4">
+            <dt class="text-muted small text-uppercase fw-semibold mb-1">
+              Perfil
+            </dt>
+            <dd class="mb-0">
+              <span
+                class="badge rounded-pill"
+                [ngClass]="usuario.role === 'ADMIN' ? 'bg-danger' : 'bg-primary'"
+              >
+                {{ usuario.role === 'ADMIN' ? 'Admin' : 'Cliente' }}
+              </span>
+            </dd>
+          </div>
+        </dl>
+      </section>
+      <section class="row gap-5 mt-5 border-top border-secondary">
+        <div class="col-12 col-md-12">
+          <h3 class="display-6 fs-2 pt-3">Alteração de dados cadastrais</h3>
+        </div>
+        <form
+          [formGroup]="contatoForm"
+          (ngSubmit)="onAtualizarContato()"
+          novalidate
+          class="col-12 col-md"
+        >
+          <div class="row g-3">
+            <div class="col-12">
+              <label
+                for="emailInput"
+                class="form-label fw-semibold small text-muted text-uppercase"
+              >
+                Email
+              </label>
+              <input
+                id="emailInput"
+                type="email"
+                class="form-control"
+                placeholder="novo@email.com"
+                formControlName="email"
+                [class.is-invalid]="contatoForm.get('email')?.invalid && contatoForm.get('email')?.touched"
+              />
+              <div class="invalid-feedback">Email inválido.</div>
+            </div>
+            <div class="col-12">
+              <label
+                for="telefoneInput"
+                class="form-label fw-semibold small text-muted text-uppercase"
+              >
+                Telefone
+              </label>
+              <input
+                id="telefoneInput"
+                type="tel"
+                class="form-control"
+                placeholder="Ex: 11999999999"
+                formControlName="telefone"
+                maxlength="11"
+                [class.is-invalid]="contatoForm.get('telefone')?.invalid && contatoForm.get('telefone')?.touched"
+              />
+              <div class="invalid-feedback">
+                Telefone deve conter 10 ou 11 dígitos.
+              </div>
+              <small class="form-text text-muted"
+                >10 ou 11 dígitos, sem espaços ou traços.</small
+              >
+            </div>
+            <div class="col-12">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="contatoForm.invalid"
+              >
+                <i class="bi bi-save me-1"></i>Salvar alterações
+              </button>
+            </div>
+          </div>
+          @if(contatoError){
+          <div
+            class="alert alert-danger d-flex align-items-center gap-2 mt-3"
+            role="alert"
+          >
+            <i class="bi bi-exclamation-triangle-fill"></i>{{ contatoError }}
+          </div>
+          } @if(contatoSuccess){
+          <div
+            class="alert alert-success d-flex align-items-center gap-2 mt-3"
+            role="alert"
+          >
+            <i class="bi bi-check-circle-fill"></i>{{ contatoSuccess }}
+          </div>
+          }
+        </form>
+
+        <form
+          [formGroup]="senhaForm"
+          (ngSubmit)="onAlterarSenha()"
+          novalidate
+          class="col-12 col-md"
+        >
+          <div class="row g-3">
+            <div class="col-12">
+              <label
+                for="senhaAtual"
+                class="form-label fw-semibold small text-muted text-uppercase"
+              >
+                Senha Atual
+              </label>
+              <input
+                id="senhaAtual"
+                type="password"
+                class="form-control"
+                formControlName="senhaAtual"
+                autocomplete="current-password"
+                [class.is-invalid]="senhaForm.get('senhaAtual')?.invalid && senhaForm.get('senhaAtual')?.touched"
+              />
+              <div class="invalid-feedback">
+                Senha deve ter entre 6 e 8 caracteres.
+              </div>
+            </div>
+            <div class="col-12">
+              <label
+                for="novaSenha"
+                class="form-label fw-semibold small text-muted text-uppercase"
+              >
+                Nova Senha
+              </label>
+              <input
+                id="novaSenha"
+                type="password"
+                class="form-control"
+                formControlName="novaSenha"
+                autocomplete="new-password"
+                [class.is-invalid]="senhaForm.get('novaSenha')?.invalid && senhaForm.get('novaSenha')?.touched"
+              />
+              <div class="invalid-feedback">
+                Senha deve ter entre 6 e 8 caracteres.
+              </div>
+            </div>
+            <div class="col-12">
+              <label
+                for="confirmarSenha"
+                class="form-label fw-semibold small text-muted text-uppercase"
+              >
+                Confirmar Nova Senha
+              </label>
+              <input
+                id="confirmarSenha"
+                type="password"
+                class="form-control"
+                formControlName="confirmarSenha"
+                autocomplete="new-password"
+                [class.is-invalid]="senhaForm.get('confirmarSenha')?.invalid && senhaForm.get('confirmarSenha')?.touched"
+              />
+              <div class="invalid-feedback">
+                Senha deve ter entre 6 e 8 caracteres.
+              </div>
+            </div>
+            <div class="col-12">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="senhaForm.invalid"
+              >
+                <i class="bi bi-lock me-1"></i>Alterar senha
+              </button>
+            </div>
+          </div>
+          @if(senhaError){
+          <div
+            class="alert alert-danger d-flex align-items-center gap-2 mt-3"
+            role="alert"
+          >
+            <i class="bi bi-exclamation-triangle-fill"></i>{{ senhaError }}
+          </div>
+          } @if(senhaSuccess){
+          <div
+            class="alert alert-success d-flex align-items-center gap-2 mt-3"
+            role="alert"
+          >
+            <i class="bi bi-check-circle-fill"></i>{{ senhaSuccess }}
+          </div>
+          }
+        </form>
+      </section>
+    </div>
+  </section>
+</div>

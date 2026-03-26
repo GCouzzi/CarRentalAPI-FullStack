@@ -13,10 +13,10 @@ const routes: Routes = [
     component: Automoveis,
     children: [
       { path: '', redirectTo: 'lista', pathMatch: 'full' },
-      { path: 'lista', component: AutomoveisLista, canActivate: [authGuard] },
-      { path: 'novo', component: AutomoveisNovo, canActivate: [adminGuard] },
-      { path: 'busca', component: AutomoveisBusca, canActivate: [authGuard] },
-      { path: 'busca/:placa', component: AutomoveisBusca, canActivate: [authGuard] },
+      { path: 'lista', component: AutomoveisLista, canActivate: [authGuard], title: 'Listar automóveis' },
+      { path: 'novo', component: AutomoveisNovo, canActivate: [adminGuard], title: 'Registrar automóvel' },
+      { path: 'busca', component: AutomoveisBusca, canActivate: [authGuard], title: 'Buscar automóvel' },
+      { path: 'busca/:placa', component: AutomoveisBusca, canActivate: [authGuard], title: 'Buscar automóvel' },
     ]
   }
 ];

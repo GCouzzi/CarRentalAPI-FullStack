@@ -1,10 +1,10 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { AutomovelResponseDTO } from '../../../core/models/automovel.model';
 import { Page } from '../../../core/models/page.model';
 import { AutomovelService } from '../../../core/services/automovel.service';
 import { AppApiError } from '../../../core/models/app-api-error.model';
 import { AuthService } from '../../../core/services/auth.service';
-import { BehaviorSubject, catchError, Observable, of, switchMap } from 'rxjs';
+import { catchError, Observable, of, switchMap } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
@@ -19,6 +19,9 @@ export class AutomoveisLista {
 
   page$!: Observable<Page<AutomovelResponseDTO> | null>;
 
+  marcaInput: string = '';
+  modeloInput: string = '';
+
   constructor(
     private readonly _automovelService: AutomovelService,
     private readonly _authService: AuthService,
@@ -32,7 +35,15 @@ export class AutomoveisLista {
       switchMap((params) => {
         const page = params['page'] ? +params['page'] : 0;
         const size = params['size'] ? +params['size'] : 10;
-        return this._automovelService.findAll(page, size).pipe(
+        const sortBy = params['sortBy'] ?? 'id';
+        const direction = params['direction'] ?? 'asc';
+        const status = params['status'] ?? undefined;
+        const marca = params['marca'] ?? undefined;
+        const modelo = params['modelo'] ?? undefined;
+        this.marcaInput = marca ?? '';
+        this.modeloInput = modelo ?? '';
+
+        return this._automovelService.findAll(page, size, sortBy, direction, status, marca, modelo).pipe(
           catchError((err: AppApiError) => {
             this.errorMessage = `${err.status} - ${err.message}`;
             return of(null);
@@ -63,6 +74,39 @@ export class AutomoveisLista {
       error: (err: AppApiError) => {
         this.errorMessage = `Error ${err.status} - ${err.message}`;
       },
+    });
+  }
+
+  get statusAtivo(): string {
+    return this.route.snapshot.queryParamMap.get('status') ?? 'todos';
+  }
+
+  setStatus(
+    valor: 'todos' | 'LIVRE' | 'ALUGADO' | 'MANUTENCAO' | 'INATIVO',
+  ): void {
+    this.router.navigate([], {
+      queryParams: { page: 0, status: valor === 'todos' ? null : valor },
+      queryParamsHandling: 'merge',
+    });
+  }
+
+  aplicarFiltrosTexto(): void {
+    this.router.navigate([], {
+      queryParams: {
+        page: 0,
+        marca: this.marcaInput.trim() || null,
+        modelo: this.modeloInput.trim() || null,
+      },
+      queryParamsHandling: 'merge',
+    });
+  }
+
+   limparFiltros(): void {
+    this.marcaInput = '';
+    this.modeloInput = '';
+    this.router.navigate([], {
+      queryParams: { page: 0, status: null, marca: null, modelo: null },
+      queryParamsHandling: 'merge',
     });
   }
 

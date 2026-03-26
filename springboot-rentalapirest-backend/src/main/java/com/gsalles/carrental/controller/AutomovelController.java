@@ -240,7 +240,9 @@ public class AutomovelController {
                             }
                     ),
                     @ApiResponse(description = "Usuário não está autenticado.", responseCode = "401"),
-                    @ApiResponse(description = "Usuário não possui permissão.", responseCode = "403")
+                    @ApiResponse(description = "Usuário não possui permissão.", responseCode = "403"),
+                    @ApiResponse(description = "Automóvel com status ALUGADO não pode ter seu status alterado manualmente.", responseCode = "400"),
+                    @ApiResponse(description = "Não é possível alterar o status de um automóvel para o status ALUGADO.", responseCode = "400")
             }
     )
     @PatchMapping(value = "/placa/{placa}",
@@ -254,8 +256,8 @@ public class AutomovelController {
     }
 
     @Operation(
-            summary = "Listar todos automóveis",
-            description = "Operação para listar todos os automóveis.",
+            summary = "Listar todos automóveis livres",
+            description = "Operação para listar todos os automóveis livres.",
             tags = {"Automoveis"},
             security = @SecurityRequirement(name = "security"),
             responses = {
@@ -273,10 +275,10 @@ public class AutomovelController {
                     @ApiResponse(description = "Usuário sem permissão.", responseCode = "403")
             }
     )
-    @GetMapping(value = "/all", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @GetMapping(value = "/livres", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<AutomovelResponseDTO>> findAllCustom() {
-        List<AutomovelResponseDTO> list = AutomovelMapper.toListDto(automovelService.buscarTodosCustom());
+        List<AutomovelResponseDTO> list = AutomovelMapper.toListDto(automovelService.buscarTodosLivres());
         list.forEach(dto -> dto.add(linkTo(methodOn(AutomovelController.class).findByPlaca(dto.getPlaca())).withRel("Self")));
         return ResponseEntity.ok(list);
     }

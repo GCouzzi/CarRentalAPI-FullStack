@@ -19,7 +19,8 @@
               class="form-control"
               formControlName="marca"
               placeholder="Ex: Toyota"
-              [ngClass]="getFieldClass('marca')"
+              [class.is-invalid]="form.get('marca')?.touched && form.get('marca')?.invalid"
+              [class.is-valid]="form.get('marca')?.touched && form.get('marca')?.valid"
             />
             <div class="invalid-feedback">Marca é obrigatória.</div>
           </div>
@@ -34,7 +35,8 @@
               class="form-control"
               formControlName="modelo"
               placeholder="Ex: Corolla"
-              [ngClass]="getFieldClass('modelo')"
+              [class.is-invalid]="form.get('modelo')?.touched && form.get('modelo')?.invalid"
+              [class.is-valid]="form.get('modelo')?.touched && form.get('modelo')?.valid"
             />
             <div class="invalid-feedback">Modelo é obrigatório.</div>
           </div>
@@ -49,7 +51,8 @@
               class="form-control"
               formControlName="cor"
               placeholder="Ex: Prata"
-              [ngClass]="getFieldClass('cor')"
+              [class.is-invalid]="form.get('cor')?.touched && form.get('cor')?.invalid"
+              [class.is-valid]="form.get('cor')?.touched && form.get('cor')?.valid"
             />
             <div class="invalid-feedback">Cor é obrigatória.</div>
           </div>
@@ -65,7 +68,8 @@
               formControlName="placa"
               placeholder="Ex: ABC-1234"
               maxlength="8"
-              [ngClass]="getFieldClass('placa')"
+              [class.is-invalid]="form.get('placa')?.touched && form.get('placa')?.invalid"
+              [class.is-valid]="form.get('placa')?.touched && form.get('placa')?.valid"
             />
             <div class="invalid-feedback">
               <ng-container *ngIf="form.get('placa')?.errors?.['required']"
@@ -86,7 +90,7 @@
             >
             <div
               class="input-group"
-              [ngClass]="getFieldClass('valorPorMinuto') ? 'has-validation' : ''"
+              [class.has-validation]="form.get('valorPorMinuto')?.touched"
             >
               <span class="input-group-text">R$</span>
               <input
@@ -96,7 +100,8 @@
                 placeholder="0,00"
                 step="0.01"
                 min="0.01"
-                [ngClass]="getFieldClass('valorPorMinuto')"
+                [class.is-invalid]="form.get('valorPorMinuto')?.touched && form.get('valorPorMinuto')?.invalid"
+                [class.is-valid]="form.get('valorPorMinuto')?.touched && form.get('valorPorMinuto')?.valid"
               />
               <div class="invalid-feedback">
                 <ng-container

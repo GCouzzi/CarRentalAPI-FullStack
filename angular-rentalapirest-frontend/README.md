@@ -1,59 +1,135 @@
-# Frontendrentalapi
+# Car Rental System — Full Stack Application 🚗💨
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.0.0.
+![Java](https://img.shields.io/badge/Java-17-orange?logo=openjdk)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3-6DB33F?logo=springboot)
+![Angular](https://img.shields.io/badge/Angular-18-DD0031?logo=angular)
+![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?logo=mysql)
+![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker)
 
-## Development server
+Sistema para gerenciamento de aluguéis de veículos, desenvolvido para automatizar o processo de check-in, check-out e controle de frotas. O projeto aplica padrões de arquitetura modernos para garantir performance e segurança.
 
-To start a local development server, run:
+---
 
-```bash
-ng serve
+## 📐 Arquitetura
+
+```
+┌─────────────────────┐       ┌──────────────────────┐       ┌──────────────┐
+│   Frontend          │       │   Backend            │       │   Banco de   │
+│   Angular 18        │──────▶│   Spring Boot 3      │──────▶│   Dados      │
+│   :80               │       │   :8080              │       │   MySQL :3306│
+└─────────────────────┘       └──────────────────────┘       └──────────────┘
+         └────────────────────── Docker Compose ───────────────────────┘
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```
+CarRentalAPI-FullStack/
+├── backend/           # API REST em Spring Boot
+├── frontend/          # SPA em Angular
+├── docker-compose.yml # Orquestração dos containers
+└── README.md
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
+
+## 🛠️ Tecnologias
+
+### Backend
+
+| Tecnologia | Utilização |
+| --- | --- |
+| **Java 17 + Spring Boot 3** | Framework principal para criação e execução da API REST |
+| **Spring Security + JWT** | Autenticação e autorização via JSON Web Token |
+| **Spring Data JPA** | Abstração para persistência e operações com banco de dados |
+| **Spring HATEOAS** | Suporte a hiperlinks nas respostas (REST HATEOAS) |
+| **Spring WebFlux + WebTestClient** | Testes de integração dos endpoints |
+| **Swagger / Springdoc OpenAPI** | Geração automática de documentação interativa |
+| **ModelMapper** | Mapeamento entre entidades e DTOs |
+| **Lombok** | Redução de código boilerplate |
+| **MySQL** | Banco de dados relacional principal |
+| **PostgreSQL** | Utilizado em testes de integração |
+
+### Frontend
+
+| Tecnologia | Utilização |
+| --- | --- |
+| **Angular 18** | Framework principal do SPA, organizado com NgModules |
+| **Angular Router** | Roteamento dinâmico com guards de autenticação por role |
+| **Reactive Forms** | Formulários reativos com validação declarativa |
+| **RxJS** | Programação reativa com Observables para consumo da API e gerenciamento de eventos assíncronos |
+| **Bootstrap + Bootstrap Icons** | Estilização e componentes visuais |
+
+---
+
+## 🚀 Funcionalidades
+
+O sistema possui diferentes níveis de acesso (Roles), garantindo que cada usuário interaja apenas com os recursos permitidos.
+
+### 📋 Gestão de Aluguéis
+
+**Módulo do Cliente:**
+- Visualização do histórico de aluguéis vinculados ao seu perfil.
+
+**Módulo Administrativo:**
+- Painel geral com listagem completa de aluguéis e paginação.
+- Busca por número de recibo ou filtragem por usuário.
+- Fluxo de Check-in (abertura) e Check-out (finalização com cálculo de valores).
+
+### 👥 Gestão de Usuários
+
+**Controle Administrativo:**
+- Listagem de todos os usuários e exclusão de usuários com role `CLIENTE`.
+- Busca avançada por CPF, e-mail ou username.
+
+### 🚗 Gestão de Automóveis
+
+- Catálogo de veículos disponíveis na frota (visível a clientes).
+- Cadastro e remoção de veículos (exclusivo para administradores).
+
+---
+
+## ▶️ Como Rodar o Projeto
+
+A forma mais simples de subir o ambiente completo é via Docker, que configura automaticamente o banco de dados, o backend e o frontend.
+
+### Pré-requisitos
+
+- [Docker](https://www.docker.com/) e [Docker Compose](https://docs.docker.com/compose/) instalados.
+
+### Passo a Passo
+
+**1. Clone o repositório:**
 
 ```bash
-ng generate --help
+git clone https://github.com/GCouzzi/CarRentalAPI-FullStack.git
+cd CarRentalAPI-FullStack
 ```
 
-## Building
+**2. Suba os containers:**
 
-To build the project run:
+Na raiz do projeto (onde está o `docker-compose.yml`), execute:
 
 ```bash
-ng build
+docker-compose up --build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+**3. Acesse a aplicação:**
 
-## Running unit tests
+| Serviço | URL |
+| --- | --- |
+| Frontend (Angular) | http://localhost |
+| Backend (API REST) | http://localhost:8080 |
+| Swagger (Documentação) | http://localhost:8080/swagger-ui.html |
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+### Credenciais de Demonstração
 
-```bash
-ng test
-```
+> ⚠️ **Atenção:** As credenciais abaixo são exclusivas para ambiente local de demonstração. Não utilize em produção.
 
-## Running end-to-end tests
+| Role | Username | Password |
+| --- | --- | --- |
+| Admin | `userAdmin` | `admin123` |
 
-For end-to-end (e2e) testing, run:
+---
 
-```bash
-ng e2e
-```
+## 📄 Licença
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Este projeto está sob a licença [MIT](./LICENSE). Veja o arquivo `LICENSE` para mais detalhes.

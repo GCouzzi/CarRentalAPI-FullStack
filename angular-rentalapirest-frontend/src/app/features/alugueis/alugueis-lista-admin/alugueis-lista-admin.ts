@@ -27,14 +27,41 @@ export class AlugueisListaAdmin implements OnInit {
       switchMap((params) => {
         const page = params['page'] ? +params['page'] : 0;
         const size = params['size'] ? +params['size'] : 10;
-        return this._aluguelService.findAll(page, size).pipe(
-          catchError((err: AppApiError) => {
-            this.errorMessage = `${err.status} - ${err.message}`;
-            return of(null);
-          }),
-        );
+        const sortBy = params['sortBy'] ?? 'id';
+        const direction = params['direction'] ?? 'asc';
+        const finalizado: boolean | undefined =
+          params['finalizado'] === 'true'
+            ? true
+            : params['finalizado'] === 'false'
+              ? false
+              : undefined;
+        return this._aluguelService
+          .findAll(page, size, sortBy, direction, finalizado)
+          .pipe(
+            catchError((err: AppApiError) => {
+              this.errorMessage = `${err.status} - ${err.message}`;
+              return of(null);
+            }),
+          );
       }),
     );
+  }
+
+  get filtroAtivo(): string {
+    const v = this.route.snapshot.queryParamMap.get('finalizado');
+    if (v === 'true') return 'true';
+    if (v === 'false') return 'false';
+    return 'todos';
+  }
+
+  setFiltro(valor: 'todos' | 'true' | 'false'): void {
+    this.router.navigate([], {
+      queryParams: {
+        page: 0,
+        finalizado: valor === 'todos' ? null : valor,
+      },
+      queryParamsHandling: 'merge',
+    });
   }
 
   goToPage(p: number): void {
