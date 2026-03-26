@@ -70,7 +70,7 @@ O sistema possui diferentes níveis de acesso (Roles), garantindo que cada usuá
 - Visualização do histórico de aluguéis vinculados ao seu perfil.
 
 **Módulo Administrativo:**
-- Painel geral com listagem completa de aluguéis e paginação.
+- Painel geral com listagem completa de aluguéis, paginação e filtragem.
 - Busca por número de recibo ou filtragem por usuário.
 - Fluxo de Check-in (abertura) e Check-out (finalização com cálculo de valores).
 
@@ -82,8 +82,14 @@ O sistema possui diferentes níveis de acesso (Roles), garantindo que cada usuá
 
 ### 🚗 Gestão de Automóveis
 
-- Catálogo de veículos disponíveis na frota (visível a clientes).
-- Cadastro e remoção de veículos (exclusivo para administradores).
+- Catálogo de veículos disponíveis na frota com possibilidade de filtro e busca por placa. (visível a clientes).
+- Cadastro, remoção de veículos e alteração de status (exclusivo para administradores).
+
+### 👤 Perfil
+
+- Visualização dos dados de usuário
+- Alteração de dados de contato
+- Alteração de senha
 
 ---
 
