@@ -4,12 +4,11 @@ import com.gsalles.carrental.dto.AutomovelDTO;
 import com.gsalles.carrental.dto.UpdateStatusDTO;
 import com.gsalles.carrental.dto.mappers.AutomovelMapper;
 import com.gsalles.carrental.dto.rdto.AutomovelResponseDTO;
-import com.gsalles.carrental.dto.rdto.UsuarioResponseDTO;
 import com.gsalles.carrental.entity.Automovel;
 import com.gsalles.carrental.exception.AutomovelUniqueViolationException;
 import com.gsalles.carrental.exception.EntityNotFoundException;
-import com.gsalles.carrental.exception.UsernameUniqueViolationException;
 import com.gsalles.carrental.service.AutomovelService;
+import com.gsalles.carrental.service.ImagemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,6 +26,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -38,6 +38,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 public class AutomovelController {
 
     private final AutomovelService automovelService;
+    private final ImagemService imagemService;
 
     @Operation(
             summary = "Criar um automóvel",
@@ -74,10 +75,18 @@ public class AutomovelController {
             }
     )
     @PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<AutomovelResponseDTO> create(@RequestBody @Valid AutomovelDTO dto) {
-        Automovel automovel = automovelService.salvar(AutomovelMapper.toAutomovel(dto));
+    public ResponseEntity<AutomovelResponseDTO> create(@RequestPart(value = "automovel") @Valid AutomovelDTO dto,
+                                                       @RequestPart(value = "imagem", required = false) MultipartFile imagem) {
+
+        String imagemPath = (imagem != null) ? imagemService.salvarImagem(imagem) : null;
+
+        Automovel automovel = AutomovelMapper.toAutomovel(dto);
+        automovel.setImagemPath(imagemPath);
+
+        automovel = automovelService.salvar(automovel);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(AutomovelMapper.toDto(automovel));
     }
 
@@ -281,5 +290,58 @@ public class AutomovelController {
         List<AutomovelResponseDTO> list = AutomovelMapper.toListDto(automovelService.buscarTodosLivres());
         list.forEach(dto -> dto.add(linkTo(methodOn(AutomovelController.class).findByPlaca(dto.getPlaca())).withRel("Self")));
         return ResponseEntity.ok(list);
+    }
+
+    @Operation(
+            summary = "Atualizar automóvel por placa",
+            description = "Operação para atualizar todos os dados de um automóvel por placa",
+            tags = {"Automoveis"},
+            security = @SecurityRequirement(name = "security"),
+            responses = {
+                    @ApiResponse(
+                            description = "Success",
+                            responseCode = "200",
+                            content = {
+                                    @Content(mediaType = "application/json", schema = @Schema(implementation = AutomovelResponseDTO.class)),
+                                    @Content(mediaType = "application/xml", schema = @Schema(implementation = AutomovelResponseDTO.class))
+                            }
+                    ),
+                    @ApiResponse(
+                            description = "Automovel não encontrado.",
+                            responseCode = "404",
+                            content = {
+                                    @Content(mediaType = "application/json", schema = @Schema(implementation = EntityNotFoundException.class)),
+                                    @Content(mediaType = "application/xml", schema = @Schema(implementation = EntityNotFoundException.class))
+                            }
+                    ),
+                    @ApiResponse(
+                            description = "Automovel já existente.",
+                            responseCode = "409",
+                            content = {
+                                    @Content(mediaType = "application/json", schema = @Schema(implementation = AutomovelUniqueViolationException.class)),
+                                    @Content(mediaType = "application/xml", schema = @Schema(implementation = AutomovelUniqueViolationException.class))
+                            }
+                    ),
+                    @ApiResponse(
+                            description = "Valor por minuto deve ser positivo e a placa deve respeitar o padrão (XXX-0000)",
+                            responseCode = "422"
+                    ),
+                    @ApiResponse(
+                            description = "O arquivo enviado não é uma imagem.",
+                            responseCode = "415"
+                    ),
+                    @ApiResponse(description = "Usuário não está autenticado.", responseCode = "401"),
+                    @ApiResponse(description = "Usuário não possui permissão.", responseCode = "403")
+            }
+    )
+    @PutMapping(value = "/placa/{placa}",
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<AutomovelResponseDTO> updateByPlaca(@PathVariable String placa,
+                                                              @RequestPart(value = "automovel") @Valid AutomovelDTO dto,
+                                                              @RequestPart(value = "imagem", required = false) MultipartFile imagem) {
+        Automovel automovel = automovelService.updateByPlaca(placa, dto, imagem);
+        return ResponseEntity.ok(AutomovelMapper.toDto(automovel));
     }
 }

@@ -21,6 +21,7 @@ public class UsuarioService {
 	
 	private final UsuarioRepository repository;
 	private final PasswordEncoder encoder;
+
 	@Transactional
 	public Usuario salvar(Usuario usuario) {
         if (repository.existsByUsername(usuario.getUsername())) {

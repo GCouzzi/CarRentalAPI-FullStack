@@ -19,4 +19,5 @@ public class AutomovelResponseDTO extends RepresentationModel<AutomovelResponseD
     private String placa;
     private String status;
     private BigDecimal valorPorMinuto;
+    private String imagemPath;
 }

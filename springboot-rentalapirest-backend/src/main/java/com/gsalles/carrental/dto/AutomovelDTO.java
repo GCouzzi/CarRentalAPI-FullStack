@@ -25,6 +25,7 @@ public class AutomovelDTO {
     private String cor;
     @NotBlank(message = "Placa é obrigatório")
     @Pattern(regexp = "[A-Z]{3}-[0-9]{4}", message = "Placa deve atender ao padrão AAA-0000")
+    @Pattern(regexp = "[A-Z]{3}-[0-9]{4}|[A-Z]{3}[0-9][A-Z][0-9]{2}", message = "Placa deve atender ao padrão AAA-0000 ou AAA0A00")
     @Size(min = 8, max = 8, message = "Placa deve ter 8 caracteres")
     private String placa;
     @Positive(message = "Valor por minuto deve ser positivo")

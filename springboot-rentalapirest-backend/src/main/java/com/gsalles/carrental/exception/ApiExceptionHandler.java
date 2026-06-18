@@ -83,4 +83,22 @@ public class ApiExceptionHandler {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, ex.getMessage()));
     }
+
+    @ExceptionHandler(UploadContentTypeViolationException.class)
+    public ResponseEntity<ErrorMessage> uploadContentTypeViolationException(UploadContentTypeViolationException ex,
+                                                                            HttpServletRequest request) {
+        log.error("Api error - ", ex);
+        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.UNSUPPORTED_MEDIA_TYPE, ex.getMessage()));
+    }
+
+    @ExceptionHandler({UploadImageException.class, FileNotFoundException.class})
+    public ResponseEntity<ErrorMessage> uploadImageException(RuntimeException ex,
+                                                             HttpServletRequest request) {
+        log.error("Api error - ", ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage()));
+    }
 }

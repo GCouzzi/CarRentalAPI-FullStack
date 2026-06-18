@@ -34,6 +34,9 @@ public class Automovel {
     @Column(name = "status", nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Status status = Status.LIVRE;
+    @Column(name = "imagem_path", nullable = true)
+    private String imagemPath;
+
 	public enum Status{
 		LIVRE, ALUGADO, MANUTENCAO, INATIVO
 	}
