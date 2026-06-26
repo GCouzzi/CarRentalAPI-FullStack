@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AutomovelResponseDTO } from '../../../core/models/automovel.model';
 import { AutomovelService } from '../../../core/services/automovel.service';
 import { AppApiError } from '../../../core/models/app-api-error.model';
@@ -33,15 +33,17 @@ export class AutomoveisBusca implements OnInit {
     private readonly _authService: AuthService,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
+    private readonly _cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.isAdmin = this._authService.isAdmin();
     this.automovel$ = combineLatest([this.route.paramMap, this.refresh$]).pipe(
-      map(([params, refresh]) => params.get('placa')),
+      map(([params]) => params.get('placa')),
       switchMap((placa) => {
         if (!placa) return of(null);
         this.placa = placa;
+        this._cdr.detectChanges();
         return this._automovelService.findByPlaca(placa).pipe(
           catchError((err: AppApiError) => {
             this.errorMessage = `${err.status} - ${err.message}`;

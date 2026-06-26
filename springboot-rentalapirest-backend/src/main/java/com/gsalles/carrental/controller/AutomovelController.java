@@ -12,6 +12,7 @@ import com.gsalles.carrental.service.ImagemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -45,6 +46,17 @@ public class AutomovelController {
             description = "Operação para criar um automóvel",
             tags = {"Automoveis"},
             security = @SecurityRequirement(name = "security"),
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+                            encoding = {
+                                    @io.swagger.v3.oas.annotations.media.Encoding(
+                                            name = "automovel",
+                                            contentType = MediaType.APPLICATION_JSON_VALUE
+                                    )
+                            }
+                    )
+            ),
             responses = {
                     @ApiResponse(
                             description = "Success",
@@ -297,6 +309,17 @@ public class AutomovelController {
             description = "Operação para atualizar todos os dados de um automóvel por placa",
             tags = {"Automoveis"},
             security = @SecurityRequirement(name = "security"),
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+                            encoding = {
+                                    @io.swagger.v3.oas.annotations.media.Encoding(
+                                            name = "automovel",
+                                            contentType = MediaType.APPLICATION_JSON_VALUE
+                                    )
+                            }
+                    )
+            ),
             responses = {
                     @ApiResponse(
                             description = "Success",

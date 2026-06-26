@@ -5,6 +5,7 @@ export interface AutomovelResponseDTO {
   placa: string;
   status: string;
   valorPorMinuto: number;
+  imagemPath: string;
 }
 export interface AutomovelDTO {
   marca: string;

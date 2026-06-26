@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AutomovelResponseDTO } from '../../../core/models/automovel.model';
 import { Page } from '../../../core/models/page.model';
 import { AutomovelService } from '../../../core/services/automovel.service';
 import { AppApiError } from '../../../core/models/app-api-error.model';
 import { AuthService } from '../../../core/services/auth.service';
-import { catchError, Observable, of, switchMap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, Observable, of, switchMap } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
@@ -13,14 +13,13 @@ import { ActivatedRoute, Router } from '@angular/router';
   templateUrl: './automoveis-lista.html',
   styleUrl: './automoveis-lista.scss',
 })
-export class AutomoveisLista {
+export class AutomoveisLista implements OnInit {
   isAdmin: boolean = false;
   errorMessage: string = '';
-
   page$!: Observable<Page<AutomovelResponseDTO> | null>;
-
   marcaInput: string = '';
   modeloInput: string = '';
+  private refresh$ = new BehaviorSubject<void>(undefined);
 
   constructor(
     private readonly _automovelService: AutomovelService,
@@ -31,10 +30,10 @@ export class AutomoveisLista {
 
   ngOnInit(): void {
     this.isAdmin = this._authService.isAdmin();
-    this.page$ = this.route.queryParams.pipe(
-      switchMap((params) => {
+    this.page$ = combineLatest([this.route.queryParams, this.refresh$]).pipe(
+      switchMap(([params]) => {
         const page = params['page'] ? +params['page'] : 0;
-        const size = params['size'] ? +params['size'] : 10;
+        const size = params['size'] ? +params['size'] : 12;
         const sortBy = params['sortBy'] ?? 'id';
         const direction = params['direction'] ?? 'asc';
         const status = params['status'] ?? undefined;
@@ -53,23 +52,18 @@ export class AutomoveisLista {
     );
   }
 
-  onDelete(
-    placa: string,
-    totalInPage: number,
-    currentPage: number,
-    size: number,
-  ): void {
+  onDelete(placa: string, totalInPage: number, currentPage: number, size: number): void {
     if (!confirm(`Confirma exclusão do veículo placa ${placa}?`)) return;
 
     this._automovelService.deleteByPlaca(placa).subscribe({
       next: () => {
         alert('Veículo excluído com sucesso!');
-        const newPage =
-          totalInPage === 1 && currentPage > 0 ? currentPage - 1 : currentPage;
+        const newPage = totalInPage === 1 && currentPage > 0 ? currentPage - 1 : currentPage;
         this.router.navigate([], {
           queryParams: { page: newPage, size },
           queryParamsHandling: 'merge',
         });
+        this.refresh$.next();
       },
       error: (err: AppApiError) => {
         this.errorMessage = `Error ${err.status} - ${err.message}`;
@@ -81,9 +75,7 @@ export class AutomoveisLista {
     return this.route.snapshot.queryParamMap.get('status') ?? 'todos';
   }
 
-  setStatus(
-    valor: 'todos' | 'LIVRE' | 'ALUGADO' | 'MANUTENCAO' | 'INATIVO',
-  ): void {
+  setStatus(valor: 'todos' | 'LIVRE' | 'ALUGADO' | 'MANUTENCAO' | 'INATIVO'): void {
     this.router.navigate([], {
       queryParams: { page: 0, status: valor === 'todos' ? null : valor },
       queryParamsHandling: 'merge',
@@ -101,7 +93,7 @@ export class AutomoveisLista {
     });
   }
 
-   limparFiltros(): void {
+  limparFiltros(): void {
     this.marcaInput = '';
     this.modeloInput = '';
     this.router.navigate([], {

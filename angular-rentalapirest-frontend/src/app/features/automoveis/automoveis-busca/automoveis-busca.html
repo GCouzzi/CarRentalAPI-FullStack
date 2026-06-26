@@ -65,68 +65,82 @@
       </div>
       <div class="card-body">
         <div class="row g-3">
-          <div class="col-sm-6 col-md-4">
-            <p class="text-muted small text-uppercase fw-semibold mb-1">
-              Marca
-            </p>
-            <p class="fw-medium mb-0">{{ automovel.marca }}</p>
+          <div class="col-12 col-md-4">
+            <img
+              [src]="'http://localhost:8080' + automovel.imagemPath"
+              [alt]="'Imagem do Automóvel ' + automovel.placa"
+              class="img-fluid rounded"
+              style="width: 100%; max-height: 500px; object-fit: cover;"
+            />
           </div>
+          <div class="col-12 col-md-8">
+            <div class="row g-3">
+              <div class="col-12">
+                <p class="text-muted small text-uppercase fw-semibold mb-1">
+                  Marca
+                </p>
+                <p class="fw-medium mb-0">{{ automovel.marca }}</p>
+              </div>
 
-          <div class="col-sm-6 col-md-4">
-            <p class="text-muted small text-uppercase fw-semibold mb-1">
-              Modelo
-            </p>
-            <p class="fw-medium mb-0">{{ automovel.modelo }}</p>
-          </div>
+              <div class="col-12">
+                <p class="text-muted small text-uppercase fw-semibold mb-1">
+                  Modelo
+                </p>
+                <p class="fw-medium mb-0">{{ automovel.modelo }}</p>
+              </div>
 
-          <div class="col-sm-6 col-md-4">
-            <p class="text-muted small text-uppercase fw-semibold mb-1">Cor</p>
-            <p class="fw-medium mb-0">{{ automovel.cor }}</p>
-          </div>
+              <div class="col-12">
+                <p class="text-muted small text-uppercase fw-semibold mb-1">
+                  Cor
+                </p>
+                <p class="fw-medium mb-0">{{ automovel.cor }}</p>
+              </div>
 
-          <div class="col-sm-6 col-md-4">
-            <p class="text-muted small text-uppercase fw-semibold mb-1">
-              Valor por Minuto
-            </p>
-            <p class="fw-semibold text-success mb-0">
-              {{ automovel.valorPorMinuto | currency:'BRL' }}
-            </p>
-          </div>
+              <div class="col-12">
+                <p class="text-muted small text-uppercase fw-semibold mb-1">
+                  Valor por Minuto
+                </p>
+                <p class="fw-semibold text-success mb-0">
+                  {{ automovel.valorPorMinuto | currency:'BRL' }}
+                </p>
+              </div>
 
-          <div class="col-sm-6 col-md-4">
-            <p class="text-muted small text-uppercase fw-semibold mb-1">
-              Status
-            </p>
-            <div class="d-flex align-items-center gap-2">
-              <span
-                class="badge rounded-pill"
-                [ngClass]="{
+              <div class="col-12">
+                <p class="text-muted small text-uppercase fw-semibold mb-1">
+                  Status
+                </p>
+                <div class="d-flex align-items-center gap-2">
+                  <span
+                    class="badge rounded-pill"
+                    [ngClass]="{
         'bg-success':           automovel.status === 'LIVRE',
         'bg-danger':            automovel.status === 'ALUGADO',
         'bg-warning text-dark': automovel.status === 'MANUTENCAO',
         'bg-secondary':         automovel.status === 'INATIVO'
       }"
-              >
-                {{ automovel.status === 'LIVRE' ? 'Livre' : automovel.status ===
-                'ALUGADO' ? 'Alugado' : automovel.status === 'MANUTENCAO' ?
-                'Manutenção' : 'Inativo' }}
-              </span>
-              @if(isAdmin && automovel.status !== 'ALUGADO'){
-              <select
-                class="form-select form-select-sm w-auto"
-                [(ngModel)]="novoStatus"
-                (change)="onAlterarStatus(automovel.placa)"
-              >
-                <option value="" disabled selected>Alterar status</option>
-                <option
-                  *ngFor="let opt of statusOptions"
-                  [value]="opt.valor"
-                  [disabled]="opt.valor === 'ALUGADO'"
-                >
-                  {{ opt.label }}
-                </option>
-              </select>
-              }
+                  >
+                    {{ automovel.status === 'LIVRE' ? 'Livre' : automovel.status
+                    === 'ALUGADO' ? 'Alugado' : automovel.status ===
+                    'MANUTENCAO' ? 'Manutenção' : 'Inativo' }}
+                  </span>
+                  @if(isAdmin && automovel.status !== 'ALUGADO'){
+                  <select
+                    class="form-select form-select-sm w-auto"
+                    [(ngModel)]="novoStatus"
+                    (change)="onAlterarStatus(automovel.placa)"
+                  >
+                    <option value="" disabled selected>Alterar status</option>
+                    <option
+                      *ngFor="let opt of statusOptions"
+                      [value]="opt.valor"
+                      [disabled]="opt.valor === 'ALUGADO'"
+                    >
+                      {{ opt.label }}
+                    </option>
+                  </select>
+                  }
+                </div>
+              </div>
             </div>
           </div>
         </div>
