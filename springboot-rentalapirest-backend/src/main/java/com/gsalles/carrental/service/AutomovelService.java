@@ -1,5 +1,6 @@
 package com.gsalles.carrental.service;
 
+import com.gsalles.carrental.dto.AutomovelDTO;
 import com.gsalles.carrental.dto.rdto.AutomovelResponseDTO;
 import com.gsalles.carrental.entity.Automovel;
 import com.gsalles.carrental.exception.AutomovelStatusUniqueViolationException;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -21,6 +23,7 @@ import java.util.List;
 public class AutomovelService {
 
     private final AutomovelRepository repository;
+    private final ImagemService imagemService;
 
     @Transactional
     public Automovel salvar(Automovel automovel) {
@@ -46,10 +49,10 @@ public class AutomovelService {
 
     @Transactional
     public void deleteByPlaca(String placa) {
-        Long deletado = repository.deleteByPlaca(placa);
-        if (deletado == 0) {
-            throw new EntityNotFoundException("Placa não encontrada.");
-        }
+        Automovel automovel = repository.findByPlaca(placa)
+                .orElseThrow(() -> new EntityNotFoundException("Placa não encontrada."));
+        imagemService.deletarImagem(automovel.getImagemPath());
+        repository.delete(automovel);
     }
 
     @Transactional(readOnly = true)
@@ -71,11 +74,29 @@ public class AutomovelService {
         if(status == Automovel.Status.ALUGADO){
             throw new AutomovelStatusUniqueViolationException("Não é possível alterar o status de um automóvel para alugado.");
         }
-        Automovel a = this.buscarPorPlaca(placa);
+        Automovel a = repository.findByPlaca(placa).orElseThrow(() -> new EntityNotFoundException("Placa não encontrada."));
         if(a.getStatus() == Automovel.Status.ALUGADO){
             throw new AutomovelStatusUniqueViolationException("Não é possível alterar o status de um automóvel alugado.");
         }
         a.setStatus(status);
         return repository.save(a);
+    }
+
+    @Transactional
+    public Automovel updateByPlaca(String placa, AutomovelDTO dto, MultipartFile imagem) {
+        Automovel automovel = repository.findByPlaca(placa).orElseThrow(() -> new EntityNotFoundException("Placa não encontrada."));
+
+        automovel.setMarca(dto.getMarca());
+        automovel.setModelo(dto.getModelo());
+        automovel.setCor(dto.getCor());
+        automovel.setPlaca(dto.getPlaca());
+        automovel.setValorPorMinuto(dto.getValorPorMinuto());
+
+        if (imagem != null) {
+            String novoPath = imagemService.atualizarImagem(automovel.getImagemPath(), imagem);
+            automovel.setImagemPath(novoPath);
+        }
+
+        return repository.save(automovel);
     }
 }

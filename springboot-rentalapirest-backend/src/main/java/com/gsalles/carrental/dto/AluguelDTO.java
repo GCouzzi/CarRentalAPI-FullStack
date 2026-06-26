@@ -18,7 +18,7 @@ public class AluguelDTO {
     @Size(min = 8, max = 20, message = "Username deve possuir entre 8 e 20 caracteres")
     private String usuarioUsername;
     @NotBlank(message = "Placa é obrigatório")
-    @Pattern(regexp = "[A-Z]{3}-[0-9]{4}", message = "Placa deve atender ao padrão AAA-0000")
+    @Pattern(regexp = "[A-Z]{3}-[0-9]{4}|[A-Z]{3}[0-9][A-Z][0-9]{2}", message = "Placa deve atender ao padrão AAA-0000 ou AAA0A00")
     @Size(min = 8, max = 8, message = "Placa deve possuir 8 caracteres")
     private String automovelPlaca;
 }

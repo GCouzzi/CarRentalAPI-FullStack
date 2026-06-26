@@ -3,7 +3,7 @@ import { UsuarioService } from '../../../core/services/usuario.service';
 import { UsuarioResponseDTO } from '../../../core/models/user.model';
 import { Page } from '../../../core/models/page.model';
 import { AppApiError } from '../../../core/models/app-api-error.model';
-import { catchError, Observable, of, switchMap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, Observable, of, switchMap } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
@@ -12,9 +12,10 @@ import { ActivatedRoute, Router } from '@angular/router';
   templateUrl: './usuarios-lista.html',
   styleUrl: './usuarios-lista.scss',
 })
-export class UsuariosLista implements OnInit{
+export class UsuariosLista implements OnInit {
   errorMessage = '';
   page$!: Observable<Page<UsuarioResponseDTO> | null>;
+  private refresh$ = new BehaviorSubject<void>(undefined);
 
   constructor(
     private readonly _usuarioService: UsuarioService,
@@ -23,8 +24,8 @@ export class UsuariosLista implements OnInit{
   ) {}
 
   ngOnInit(): void {
-    this.page$ = this.route.queryParams.pipe(
-      switchMap(params => {
+    this.page$ = combineLatest([this.route.queryParams, this.refresh$]).pipe(
+      switchMap(([params]) => {
         const page = params['page'] ? +params['page'] : 0;
         const size = params['size'] ? +params['size'] : 10;
         return this._usuarioService.findAll(page, size).pipe(
@@ -48,6 +49,7 @@ export class UsuariosLista implements OnInit{
           queryParams: { page: newPage, size },
           queryParamsHandling: 'merge'
         });
+        this.refresh$.next();
       },
       error: (err: AppApiError) => {
         this.errorMessage = `Error ${err.status} - ${err.message}`;
